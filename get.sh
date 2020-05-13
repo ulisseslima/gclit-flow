@@ -1,4 +1,10 @@
 #!/bin/bash
+MYSELF="$(readlink -f "$0")"
+MYDIR="${MYSELF%/*}"
+ME=$(basename $MYSELF)
+
+source $MYDIR/env
+[[ -f $LOCAL_ENV ]] && source $LOCAL_ENV 
 
 if [[ $(nan "$1") == true || "$1" -lt 1 ]]; then
 	echo "arg 1 has to be index number, 1-based"

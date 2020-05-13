@@ -26,7 +26,8 @@ do
     projects=$($MYDIR/runrun.sh GET "$query")
     if [[ -n "$projects" ]]; then
         echo "$projects" | $MYDIR/jmap.py id name > "$tmp"
-        cat "$tmp" | tee --append "$PROJECTS"
+        cat "$tmp" >> "$PROJECTS"
+        debug "$tmp"
     fi 
 	
 	count=$(cat "$tmp" | wc -l)

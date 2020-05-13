@@ -56,7 +56,13 @@ function rr_header_usr_token() {
 }
 
 function rr_user_id() {
-    echo $USR_EMAIL | cut -d'@' -f1 | tr '.' '-'
+    u=$(echo $USR_EMAIL | cut -d'@' -f1 | tr '.' '-')
+    if [[ ! -n "$u" ]]; then
+        err "couldn't parse user id from '$USR_EMAIL'"
+        exit 1
+    fi
+
+    echo $u
 }
 
 function nan() {

@@ -27,4 +27,5 @@ do
 	eval echo $2
 	((i++))
 	((n++))
+	sleep .1
 done < <(echo "$1")

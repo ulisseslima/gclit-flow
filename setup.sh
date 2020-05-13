@@ -43,6 +43,7 @@ function prompt() {
 
 	if [[ $set == true ]]; then
         prop $LOCAL_ENV $keyname $currval
+        source $LOCAL_ENV
     fi
 }
 
@@ -88,11 +89,11 @@ function prompt_project_task() {
             info "you're not working on any project, choose one (enter name or ID):"
             read name_or_id
 
+            info "searching..."
             project=$($MYDIR/rr-find-project.sh "$name_or_id")
-            debug "results: $project"
-
             n=$(echo "$project" | $MYDIR/lines.sh)
             if [[ $n -gt 1 ]]; then
+                info "found $n results that match '$name_or_id':"
                 $MYDIR/iterate.sh "$project" '$line [$n]'
                 info "choose one [1]:"
                 read one
@@ -101,6 +102,8 @@ function prompt_project_task() {
                 project=$($MYDIR/get.sh $one "$project")
                 [[ ! -n "$project" ]] && project=$($MYDIR/get.sh 1 "$project")
             fi
+
+            info "project defined as: $project"
         done
 
         if [[ $new_project == true ]]; then
@@ -109,9 +112,11 @@ function prompt_project_task() {
                 info "choose a task to start working on (enter name or ID):"
                 read name_or_id
 
+                info "searching..."
                 task=$($MYDIR/rr-find-task.sh "$name_or_id" "$(echo $project | cut -d'=' -f1)")
                 n=$(echo "$task" | $MYDIR/lines.sh)
                 if [[ $n -gt 1 ]]; then
+                    info "found $n results that match '$name_or_id':"
                     $MYDIR/iterate.sh "$task" '$line [$n]'
                     info "choose one [1]:"
                     read one

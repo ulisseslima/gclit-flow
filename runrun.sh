@@ -50,4 +50,8 @@ mkdir -p $(dirname "$out")
 echo "$response" > "$out"
 debug "response cached to $out"
 
+if [[ "$response" == *html* ]]; then
+	err "$response"
+fi
+
 echo "$response"
