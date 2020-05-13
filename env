@@ -1,0 +1,80 @@
+#!/bin/bash -e
+VERSION=0.0.1
+INSTALL_PREFFIX=gclit
+
+if [[ $EUID -eq 0 ]]; then
+    echo "this script should NOT be run as root" 1>&2
+    exit 1
+fi
+
+# these settings can be overridden by creating $LOCAL_ENV
+SETUP_DEBUG=false
+
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+CLIT="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+REPO_DIR=$CLIT
+REPO_NAME=$(basename $REPO_DIR)
+
+TODAY=$($CLIT/now.sh -d)
+TODAY_F=/tmp/today
+echo $TODAY > $TODAY_F
+
+CHANGELOG=$REPO_DIR/README.md
+
+CONFD=$HOME/.${REPO_NAME}
+LOCAL_ENV=$CONFD/config
+LOCAL_DB=$CONFD/db
+LOGF=$CONFD/${REPO_NAME}.log
+
+USR_EMAIL=''
+
+CACHE=/tmp/$REPO_NAME
+mkdir -p $CACHE
+
+TARGET_BRANCH=master
+FEATURE_PREFFIX='feature/'
+HOTFIX_PREFFIX='hotfix/'
+
+#RR_CACHE_TTL=5000
+# rr global query params: limit=100, page=1, sort=jprop, sort_dir=desc, filter_id=all
+RR_APP_KEY=''
+RR_U_TOKEN=''
+RR_URL='https://runrun.it'
+RR_API='https://runrun.it/api/v1.0'
+
+function rr_header_app_key() {
+    echo "App-Key: $RR_APP_KEY"
+}
+
+function rr_header_usr_token() {
+    echo "User-Token: $RR_U_TOKEN"
+}
+
+function rr_user_id() {
+    echo $USR_EMAIL | cut -d'@' -f1 | tr '.' '-'
+}
+
+function nan() {
+    in="$1"
+
+    regex='^[0-9.]+$'
+    if ! [[ "$in" =~ $regex ]] ; then
+        echo true
+    else
+        echo false
+    fi
+}
+
+function safe_name() {
+    # remove non ascii:
+    name=$(echo "$1" | iconv -f utf8 -t ascii//TRANSLIT)
+    # to lower case:
+    name=$(echo ${name,,})
+    # replace spaces for "-", then remove anything that's non alphanumeric
+    echo ${name// /-} | sed 's/[^a-z-]//g'
+}
