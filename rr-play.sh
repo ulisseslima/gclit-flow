@@ -28,6 +28,12 @@ if [[ "$json" == *'already in progress'* ]]; then
 fi
 
 if [[ -n "$json" ]]; then
+    if [[ "$json" == *'error'* ]]; then
+        err "error resuming task!"
+        echo "$json"
+        exit 1
+    fi
+
     t_id=$(echo "$json" | $MYDIR/jprop.sh "['id']")
     t_name=$(echo "$json" | $MYDIR/jprop.sh "['title']")
     t_type=$(echo "$json" | $MYDIR/jprop.sh "['type_id']")

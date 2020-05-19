@@ -10,7 +10,6 @@ source $MYDIR/log.sh
 source $MYDIR/db.sh
 
 message="$1"
-mr=${2:-true}
 
 if [[ ! -n "$(curr_branch)" ]]; then
     err "you have to be inside the repository directory"
@@ -38,19 +37,9 @@ else
     read message
 fi
 
-$MYDIR/commit.sh "$message"
-if [[ $mr == true ]]; then
-    $MYDIR/merge-request.sh "$message" false
-fi
-$MYDIR/sync.sh
-$MYDIR/push.sh "$message"
+info "pushing changes..."
+git add .
+git commit -a -m "$message" || true
+git push
 
-if [[ $mr == false ]]; then
-    info "merging directly to $target ..."
-    git checkout $target
-    git pull
-    git add .
-    git commit -a -m "$message" && git push || true
-fi
-
-info "'$name' delivered. exit status: $?"
+$MYDIR/rr-comment.sh "pushed to $name: $message"

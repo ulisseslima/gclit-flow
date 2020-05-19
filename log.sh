@@ -53,7 +53,7 @@ function log() {
 }
 
 function info() {
-    log INFO '###' "$@"
+    >&2 log INFO '###' "$@"
 }
 
 function err() {

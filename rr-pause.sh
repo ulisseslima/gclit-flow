@@ -22,6 +22,9 @@ info "pausing '$name' ..."
 json=$($MYDIR/runrun.sh POST "tasks/$id/pause")
 if [[ "$json" == *'already paused'* ]]; then
     info "'$name' was already paused!"
+elif [[ "$json" == *'error'* ]]; then
+    err "error pausing '$name'!"
+    echo "$json"
 else
     info "'$name' paused."
 fi

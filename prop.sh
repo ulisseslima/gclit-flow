@@ -29,6 +29,11 @@ function prop() {
     echo "$thekey=$newvalue" >> $filename
   else
     debug "SETTING '${thekey}'"
+    if [[ "$newvalue" == */* ]]; then
+      newvalue="${newvalue//\//\\\/}"
+      debug "value escaped as: $newvalue"
+    fi
+
     sed -ir "s/^[#]*\s*${thekey}=.*/$thekey=$newvalue/" $filename
   fi
 }

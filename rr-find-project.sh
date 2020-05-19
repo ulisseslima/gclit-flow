@@ -13,4 +13,9 @@ if [[ ! -n "$regex" ]]; then
     exit 1
 fi
 
-grep -iP "$regex" $CACHE/projects.map || true
+STORE=$CACHE/projects.map
+if [[ ! -f $STORE ]]; then
+    $MYDIR/rr-find-all-projects.sh
+fi
+
+grep -iP "$regex" $STORE || true
