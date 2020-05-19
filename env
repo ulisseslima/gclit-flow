@@ -1,6 +1,7 @@
 #!/bin/bash -e
+# TODO mudar as confs locais pra serem por repo
 VERSION=0.0.1
-INSTALL_PREFFIX=gclit
+INSTALL_PREFIX=gclit
 
 if [[ $EUID -eq 0 ]]; then
     echo "this script should NOT be run as root" 1>&2
@@ -37,8 +38,9 @@ CACHE=/tmp/$REPO_NAME
 mkdir -p $CACHE
 
 TARGET_BRANCH=master
-FEATURE_PREFFIX='feature/'
-HOTFIX_PREFFIX='hotfix/'
+FEATURE_PREFIX='feature'
+HOTFIX_PREFIX='hotfix'
+REMOTE_FEATURES=true
 
 #RR_CACHE_TTL=5000
 # rr global query params: limit=100, page=1, sort=jprop, sort_dir=desc, filter_id=all
@@ -83,4 +85,36 @@ function safe_name() {
     name=$(echo ${name,,})
     # replace spaces for "-", then remove anything that's non alphanumeric
     echo ${name// /-} | sed 's/[^a-z-]//g'
+}
+
+##
+# prompts for a project.
+# @param project name or id, case insensitive
+# @return project id
+function prompt_project_id() {
+    name_or_id="$1"
+
+    project=$($MYDIR/rr-find-project.sh "$name_or_id")
+    n=$(echo "$project" | $MYDIR/lines.sh)
+    if [[ $n -gt 1 ]]; then
+        $MYDIR/iterate.sh "$project" '$line [$n]'
+        info "choose one [1]:"
+        read one
+
+        [[ ! -n "$one" ]] && one=1
+        project=$($MYDIR/get.sh $one "$project")
+        [[ ! -n "$project" ]] && project=$($MYDIR/get.sh 1 "$project")
+    fi
+
+    if [[ ! -n "$project" ]]; then
+        err "could not find project '$project', try again"
+        exit 1
+    fi
+
+    # return project id:
+    echo $project | cut -d'=' -f1
+}
+
+function curr_branch() {
+    git branch | grep '*' | cut -d' ' -f2
 }

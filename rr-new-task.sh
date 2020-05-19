@@ -1,4 +1,5 @@
 #!/bin/bash -e
+# @installable
 MYSELF="$(readlink -f "$0")"
 MYDIR="${MYSELF%/*}"
 ME=$(basename $MYSELF)
@@ -10,8 +11,10 @@ source $MYDIR/db.sh
 
 project_id="$(db CURR_PROJECT_ID)"
 if [[ $(nan "$project_id") == true ]]; then
-    err "to start a new task you need to be working on a project. please run gclit-rr-curr-task."
-    exit 1
+    info "to start a new task you need to be working on a project. enter desired project name:"
+    read name_or_id
+
+    project_id=$(prompt_project_id "$name_or_id")
 fi
 
 type=$(db CURR_TASK_TYPE)
@@ -32,6 +35,16 @@ if [[ ! -n "$name" ]]; then
     exit 1
 fi
 
+matches="$($MYDIR/rr-find-task.sh "$name")"
+if [[ -n "$matches" ]]; then
+  err "task already exists:"
+  echo "$matches"
+
+  first=$($MYDIR/get.sh 1 "$matches" | cut -d'=' -f1)
+  $MYDIR/rr-play.sh $first
+  exit 0
+fi
+
 json=$($MYDIR/runrun.sh POST tasks "{
   \"task\": {
     \"scheduled_start_time\": null,
@@ -49,9 +62,10 @@ json=$($MYDIR/runrun.sh POST tasks "{
   }
 }")
 
-if [[ "$json" == *'already paused'* ]]; then
-    info "'$name' was already paused!"
+if [[ "$json" == *'error'* ]]; then
+    err "problem creating task '$name', check cached response with $MYDIR/last-response.sh"
 else
-    info "'$name' created"
-    #$MYDIR/rr-play.sh
+    t_id=$(echo "$json" | $MYDIR/jprop.sh "['id']")
+    info "'$name' created with ID '$t_id'. playing..."
+    $MYDIR/rr-play.sh $t_id
 fi

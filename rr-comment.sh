@@ -1,4 +1,5 @@
 #!/bin/bash -e
+# @installable
 MYSELF="$(readlink -f "$0")"
 MYDIR="${MYSELF%/*}"
 ME=$(basename $MYSELF)
@@ -27,8 +28,10 @@ json=$($MYDIR/runrun.sh POST comments "{
   \"text\": \"$comment\"
 }")
 
-if [[ "$json" == *'already paused'* ]]; then
-    info "'$name' was already paused!"
+if [[ "$json" == *'error'* ]]; then
+    err "error posting comment!"
+    exit 1
 else
-    info "'$name' paused."
+    c_id=$(echo "$json" | $MYDIR/jprop.sh "['id']")
+    info "comment posted. #$c_id"
 fi

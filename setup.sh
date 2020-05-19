@@ -152,7 +152,8 @@ function install() {
     do
         name=$(basename $script)
 
-        iname="$INSTALL_PREFFIX-${name/.sh/}"
+        iname="$INSTALL_PREFIX-${name/.sh/}"
+        iname="${iname/-rr-/-}"
         fname="/usr/local/bin/$iname"
 
         sudo ln -s $script $fname
@@ -165,7 +166,8 @@ function install() {
 ##
 # remove stuff from PATH
 function uninstall() {
-    sudo rm /usr/local/bin/$INSTALL_PREFFIX*
+    # unsafe
+    sudo rm /usr/local/bin/${INSTALL_PREFIX}-*
 }
 
 ##
