@@ -44,3 +44,5 @@ if [[ $mr == true ]]; then
 fi
 $MYDIR/sync.sh
 $MYDIR/push.sh "$message"
+
+info "'$name' delivered: $?"
