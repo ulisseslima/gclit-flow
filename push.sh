@@ -39,7 +39,7 @@ fi
 
 info "pushing changes..."
 git add .
-git commit -a -m "$message"
+git commit -a -m "$message" || true
 git push
 
 $MYDIR/rr-comment.sh "pushed to $name: $message"

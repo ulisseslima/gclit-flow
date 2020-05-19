@@ -45,4 +45,12 @@ fi
 $MYDIR/sync.sh
 $MYDIR/push.sh "$message"
 
+if [[ $mr == false ]]; then
+    info "merging directly to $target ..."
+    git checkout $target
+    git pull
+    git add .
+    git commit -a -m "$message" && git push || true
+fi
+
 info "'$name' delivered: $?"
