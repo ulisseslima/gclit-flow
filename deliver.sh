@@ -53,4 +53,4 @@ if [[ $mr == false ]]; then
     git commit -a -m "$message" && git push || true
 fi
 
-info "'$name' delivered: $?"
+info "'$name' delivered. exit status: $?"
