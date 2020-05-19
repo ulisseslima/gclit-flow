@@ -10,6 +10,7 @@ source $MYDIR/log.sh
 source $MYDIR/db.sh
 
 message="$1"
+mr=${2:-true}
 
 if [[ ! -n "$(curr_branch)" ]]; then
     err "you have to be inside the repository directory"
@@ -38,6 +39,8 @@ else
 fi
 
 $MYDIR/commit.sh "$message"
-$MYDIR/merge-request.sh "$message" false
+if [[ $mr == true ]]; then
+    $MYDIR/merge-request.sh "$message" false
+fi
 $MYDIR/sync.sh
 $MYDIR/push.sh "$message"
