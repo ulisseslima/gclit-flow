@@ -9,8 +9,7 @@ source $MYDIR/env
 source $MYDIR/log.sh
 source $MYDIR/db.sh
 
-target=$TARGET_BRANCH
-info "syncing with $target ..."
+message="$1"
 
 if [[ ! -n "$(curr_branch)" ]]; then
     err "you have to be inside the repository directory"
@@ -22,11 +21,25 @@ if [[ ! -n "$(curr_branch)" ]]; then
     exit 1
 fi
 
-current=$(db CURR_FEATURE)
+name="$(db CURR_FEATURE)"
+target=$TARGET_BRANCH
+if [[ ! -n "$name" ]]; then
+    err "you're not working on any features, make sure to start one with gclit-feature"
+    exit 1
+fi
 
-git checkout $target
-git pull
-git checkout $current
-git merge $target
+git checkout $name
 
-$MYDIR/rr-comment.sh "synced to $target"
+info "${name}'s conclusion message:"
+if [[ -n "$message" ]]; then
+    echo "$message"
+else
+    read message
+fi
+
+info "pushing changes..."
+git add .
+git commit -a -m "$message"
+git push
+
+$MYDIR/rr-comment.sh "pushed to $name: $message"

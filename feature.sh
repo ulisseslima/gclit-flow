@@ -11,6 +11,11 @@ source $MYDIR/db.sh
 
 if [[ ! -n "$(curr_branch)" ]]; then
     err "you have to be inside the repository directory"
+    branchd="$(db CURR_FEATURE_DIR)"
+    if [[ -d "$branchd" ]]; then
+        info "maybe you want to go to $branchd?"
+    fi
+
     exit 1
 fi
 
@@ -60,8 +65,8 @@ info "will start '$name' on project '$project_name', proceed?"
 read anyKey
 
 git checkout -b "$name"
-db CURR_BRANCH "$name"
-db CURR_BRANCH_DIR "$PWD"
+db CURR_FEATURE "$name"
+db CURR_FEATURE_DIR "$PWD"
 
 if [[ $REMOTE_FEATURES == true ]]; then
     git push -u origin $name
