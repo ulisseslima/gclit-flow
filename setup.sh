@@ -167,7 +167,7 @@ function install() {
 # remove stuff from PATH
 function uninstall() {
     # unsafe
-    sudo rm /usr/local/bin/${INSTALL_PREFIX}-*
+    sudo rm -f /usr/local/bin/${INSTALL_PREFIX}-*
 }
 
 ##
