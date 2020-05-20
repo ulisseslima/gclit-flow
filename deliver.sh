@@ -53,7 +53,8 @@ if [[ $mr == false || $(project_url) == *github* ]]; then
     git pull
     git merge --no-ff "$name"
     git add .
-    git commit -a -m "$message" && git push
+    git commit -a -m "$message"
+    git push
 
     info "deleting '$name' branch..."
     git branch -d "$name"
