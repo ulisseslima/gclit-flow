@@ -21,4 +21,16 @@ Another Git Flow solution, this time integrating with the RunRun API.
 gclit-feature "the name"
 ```
 
- 
+* Make changes...
+
+* Keep up to date with remote branch when desired:
+```
+gclit-sync
+```
+
+* Make more changes...
+
+* Deliver the fature:
+```
+gclit-deliver
+```
