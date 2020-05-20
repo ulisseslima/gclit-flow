@@ -22,7 +22,7 @@ if [[ ! -n "$p_id" ]]; then
 fi
 
 debug "searching for task like '$regex' on project $p_id ..."
-json=$($MYDIR/runrun.sh GET 'tasks?project_id=$p_id')
+json=$($MYDIR/runrun.sh GET "tasks?project_id=$p_id")
 if [[ -n "$json" ]]; then
-    echo "$json" | $MYDIR/jmap.py id title | grep -iP "$regex"
+    echo "$json" | $MYDIR/jmap.py id title | grep -iP "$regex" || true
 fi

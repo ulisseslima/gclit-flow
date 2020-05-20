@@ -38,21 +38,28 @@ else
     read message
 fi
 
+echo "$(date)" > v
+
 $MYDIR/commit.sh "$message"
-if [[ $mr == true ]]; then
+if [[ $mr == true && $(project_url) == *gitlab* ]]; then
     $MYDIR/merge-request.sh "$message" false
 fi
 $MYDIR/sync.sh
 $MYDIR/push.sh "$message"
 
-if [[ $mr == false ]]; then
+if [[ $mr == false || $(project_url) == *github* ]]; then
     info "merging directly to $target ..."
     git checkout $target
     git pull
     git merge --no-ff "$name"
     git add .
-    git commit -a -m "$message" && git push || true
-    
+    git commit -a -m "$message" && git push
+
+    info "deleting '$name' branch..."
+    git branch -d "$name"
 fi
+
+info "ending '$name' task..."
+$MYDIR/rr-deliver-task.sh
 
 info "'$name' delivered. exit status: $?"
