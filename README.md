@@ -16,9 +16,21 @@ Another Git Flow solution, this time integrating with the RunRun API.
 * Follow the prompts...
 
 # Usage example:
-* Start a feature:
+* Start a feature (creates a branch with "feature/" prefix, creates a runrun task on the current project, pushes the feature to the target branch, creates a comment on the runrun task with additional info):
 ```
 gclit-feature "the name"
 ```
 
- 
+* Make changes...
+
+* Keep up to date with remote branch changes:
+```
+gclit-sync
+```
+
+* Make more changes...
+
+* Deliver the fature (commits pending changes, creates merge request if project url is from gitlab, syncs with target branch [e.g.: master], pushes changes, merges changes back to target branch if project url is from github, delivers runrun task):
+```
+gclit-deliver
+```
