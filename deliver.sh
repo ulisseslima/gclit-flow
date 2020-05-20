@@ -52,7 +52,12 @@ if [[ $mr == false ]]; then
     git merge --no-ff "$name"
     git add .
     git commit -a -m "$message" && git push || true
-    
+
+    info "deleting '$name' branch..."
+    git branch -d "$name"
 fi
+
+info "ending '$name' task..."
+$MYDIR/rr-deliver-task.sh
 
 info "'$name' delivered. exit status: $?"

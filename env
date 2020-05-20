@@ -118,3 +118,7 @@ function prompt_project_id() {
 function curr_branch() {
     git branch | grep '*' | cut -d' ' -f2
 }
+
+function project_url() {
+    grep url .git/config | cut -d'=' -f2 | tr -d ' '
+}

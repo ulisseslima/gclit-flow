@@ -64,12 +64,21 @@ fi
 info "will start '$name' on project '$project_name', proceed?"
 read anyKey
 
-git checkout -b "$name"
-db CURR_FEATURE "$name"
-db CURR_FEATURE_DIR "$PWD"
+if [[ "$(curr_branch)" != "$name" ]]; then
+    info "creating git branch..."
+    git checkout -b "$name"
+    db CURR_FEATURE "$name"
+    db CURR_FEATURE_DIR "$PWD"
+else
+    info "branch already created..."
+fi
 
 if [[ $REMOTE_FEATURES == true ]]; then
+    info "pushing local branch to remote..."
     git push -u origin $name
 fi
 
 $MYDIR/rr-new-task.sh "$name"
+
+info "additional project info on runrun..."
+$MYDIR/rr-comment.sh "started a new feature on $(project_url)"
