@@ -11,11 +11,13 @@ Another Git Flow solution, this time integrating with the RunRun API.
 ## RunRun rest API integration
 * https://runrun.it/api/documentation
 
-# Installation
-## ./setup.sh
+## Installation
+```
+./setup.sh
+```
 * Follow the prompts...
 
-# Usage example:
+## Usage example:
 * Start a feature (creates a branch with "feature/" prefix, creates a runrun task on the current project, pushes the feature to the target branch, creates a comment on the runrun task with additional info):
 ```
 gclit-feature "the name"
@@ -39,4 +41,10 @@ gclit-deliver
 ```
 gclit-play
 gclit-pause
+```
+
+## Debug
+* Open debug logs with:
+```
+./logs.sh
 ```
