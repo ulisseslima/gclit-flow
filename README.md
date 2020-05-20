@@ -34,3 +34,9 @@ gclit-sync
 ```
 gclit-deliver
 ```
+
+* At any time you can pause/play the current runrun task:
+```
+gclit-play
+gclit-pause
+```
