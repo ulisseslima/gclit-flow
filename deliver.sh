@@ -41,7 +41,7 @@ fi
 echo "$(date)" > v
 
 $MYDIR/commit.sh "$message"
-if [[ $mr == true || $(project_url) == *gitlab* ]]; then
+if [[ $mr == true && $(project_url) == *gitlab* ]]; then
     $MYDIR/merge-request.sh "$message" false
 fi
 $MYDIR/sync.sh
