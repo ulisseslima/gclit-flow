@@ -20,10 +20,12 @@ if [[ ! -n "$(curr_branch)" ]]; then
 fi
 
 if [[ "$1" != '-'* ]]; then
+    # name was passed directlty as first arg with no prefix
     name="$1"; shift
 fi
 
 project_id="$(db CURR_PROJECT_ID)"
+label=gclit
 
 while test $# -gt 0
 do
@@ -37,6 +39,10 @@ do
         name_or_id="$1"
 
         project_id=$(prompt_project_id "$name_or_id")
+    ;;
+    --label)
+        shift
+        label="$1"
     ;;
     -*)
         echo "bad option '$1'"
@@ -61,7 +67,9 @@ if [[ ! -n "$project_name" ]]; then
     exit 1
 fi
 
-info "will start '$name' on project '$project_name', proceed?"
+info "will start '$name' on project '$project_name'"
+info "project URL: $(project_url)"
+echo "<enter> to proceed, CTRL+C to abort"
 read anyKey
 
 if [[ "$(curr_branch)" != "$name" ]]; then
