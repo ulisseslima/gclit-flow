@@ -9,15 +9,22 @@ source $MYDIR/env
 source $MYDIR/log.sh
 source $MYDIR/db.sh
 
-id="$(db CURR_TASK_ID)"
+id="$1"
+if [[ ! -n "$id" ]]; then
+    id="$(db CURR_TASK_ID)"
+fi
 name="$(db CURR_TASK_NAME)"
+
+if [[ $(nan "$id") == true ]]; then
+    err "arg 1 must be the task id"
+fi
 
 if [[ $(nan "$id") == true ]]; then
     info "no tasks were running"
     exit 0
 fi
 
-info "pausing '$name' ..."
+info "pausing task #$id ..."
 
 json=$($MYDIR/runrun.sh POST "tasks/$id/pause")
 if [[ "$json" == *'already paused'* ]]; then

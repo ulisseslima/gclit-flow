@@ -27,6 +27,10 @@ function db() {
     fi
 }
 
+function db_dump() {
+    cat $LOCAL_DB
+}
+
 if [[ -n "$1" && $(MYNAME) == $CALLER ]]; then
     if [[ "$1" == -r ]]; then
         less $LOCAL_DB

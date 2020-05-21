@@ -15,9 +15,13 @@ if [[ ! -n "$id" ]]; then
 fi
 
 if [[ $(nan "$id") == true ]]; then
-    err "arg 1 must be the task id, showing results for '$id'..."
-    $MYDIR/rr-find-task.sh "$id"
-    info "choose one an try again"
+    err "arg 1 must be the task id"
+    if [[ -n "$id" ]]; then
+        info "showing results for '$id'..."
+        $MYDIR/rr-find-task.sh "$id"
+    fi
+    
+    info "choose one and try again"
     exit 1
 fi
 

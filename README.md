@@ -32,7 +32,7 @@ gclit-sync
 
 * Make more changes...
 
-* Deliver the fature (commits pending changes, creates merge request if project url is from gitlab, syncs with target branch [e.g.: master], pushes changes, merges changes back to target branch if project url is from github, delivers runrun task):
+* Deliver the feature (commits pending changes, creates merge request if project url is from gitlab, syncs with target branch [e.g.: master], pushes changes, merges changes back to target branch if project url is from github, delivers runrun task):
 ```
 gclit-deliver
 ```

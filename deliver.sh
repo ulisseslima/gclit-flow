@@ -29,20 +29,25 @@ if [[ ! -n "$name" ]]; then
     exit 1
 fi
 
+if [[ "$PWD" != $(db CURR_FEATURE_DIR) ]]; then
+    err "feature '$name' was started on another repo:"
+    db CURR_FEATURE_DIR
+    exit 1
+fi
+
 git checkout $name
 
-info "${name}'s conclusion message:"
-if [[ -n "$message" ]]; then
-    echo "$message"
-else
+while [[ ! -n "$message" ]]; do
+    info "${name}'s conclusion message:"
     read message
-fi
+done
+debug "delivery message: '$message'"
 
 echo "$(date)" > v
 
 $MYDIR/commit.sh "$message"
 if [[ $mr == true && $(project_url) == *gitlab* ]]; then
-    $MYDIR/merge-request.sh "$message" false
+    $MYDIR/merge-request.sh "$@"
 fi
 $MYDIR/sync.sh
 $MYDIR/push.sh "$message"
