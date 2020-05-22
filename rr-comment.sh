@@ -33,5 +33,5 @@ if [[ "$json" == *'error'* ]]; then
     exit 1
 else
     c_id=$(echo "$json" | $MYDIR/jprop.sh "['id']")
-    info "comment posted. #$c_id"
+    info "comment #$c_id posted: https://runrun.it/en-US/tasks/$(db CURR_TASK_ID)"
 fi

@@ -21,7 +21,7 @@ if [[ $(nan "$id") == true ]]; then
         $MYDIR/rr-find-task.sh "$@"
     fi
     
-    info "choose one and try again"
+    info "choose an ID and try again"
     exit 1
 fi
 
@@ -62,5 +62,5 @@ if [[ -n "$json" ]]; then
     t_team=$(echo "$json" | $MYDIR/jprop.sh "['team_id']")
     db CURR_TASK_TEAM "${t_team}"
 
-    echo "${t_id}=${t_name}"
+    echo "https://runrun.it/en-US/tasks/${t_id}"
 fi
