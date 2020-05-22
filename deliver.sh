@@ -25,7 +25,7 @@ fi
 name="$(db CURR_FEATURE)"
 target=$TARGET_BRANCH
 if [[ ! -n "$name" ]]; then
-    err "you're not working on any features, make sure to start one with gclit-feature"
+    err "you're not working on a feature, make sure to start one with gclit-feature"
     exit 1
 fi
 
@@ -61,8 +61,10 @@ if [[ $mr == false || $(project_url) == *github* ]]; then
     git commit -a -m "$message" || true
     git push
 
-    info "deleting '$name' branch..."
-    git branch -d "$name"
+    if [[ $FEATURE_DELETE_WHEN_DELIVERED == true ]]; then
+        info "deleting '$name' branch..."
+        git branch -d "$name"
+    fi
 fi
 
 info "ending '$name' task..."

@@ -41,6 +41,7 @@ TARGET_BRANCH=master
 FEATURE_PREFIX='feature'
 HOTFIX_PREFIX='hotfix'
 REMOTE_FEATURES=true
+FEATURE_DELETE_WHEN_DELIVERED=true
 
 #RR_CACHE_TTL=5000
 # rr global query params: limit=100, page=1, sort=jprop, sort_dir=desc, filter_id=all
@@ -95,15 +96,24 @@ function prompt_project_id() {
     name_or_id="$1"
 
     project=$($MYDIR/rr-find-project.sh "$name_or_id")
+    debug "matches for $name_or_id:"
+    debug "$project"
+
     n=$(echo "$project" | $MYDIR/lines.sh)
     if [[ $n -gt 1 ]]; then
+        info "found multiple matches for '$name_or_id':"
         $MYDIR/iterate.sh "$project" '$line [$n]'
-        info "choose one [1]:"
+        info -n "choose one [1]:"
         read one
 
         [[ ! -n "$one" ]] && one=1
+        debug "selected [$one]"
         project=$($MYDIR/get.sh $one "$project")
-        [[ ! -n "$project" ]] && project=$($MYDIR/get.sh 1 "$project")
+        debug "got '$project'"
+        if [[ ! -n "$project" ]]; then
+            project=$($MYDIR/get.sh 1 "$project")
+            debug "index out of bounds, falling back to $project"
+        fi
     fi
 
     if [[ ! -n "$project" ]]; then

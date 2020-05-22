@@ -17,22 +17,56 @@ fi
 info "creating runrun task '$name'..."
 
 project_id="$(db CURR_PROJECT_ID)"
-if [[ $(nan "$project_id") == true ]]; then
-    info "to start a new task you need to be working on a project. enter desired project name:"
-    read name_or_id
+type=$(db CURR_TASK_TYPE)
+team=$(db CURR_TASK_TEAM)
 
-    project_id=$(prompt_project_id "$name_or_id")
-fi
+while test $# -gt 0
+do
+    case "$1" in
+    --like)
+        shift
+        lid=$1
+        task=$($MYDIR/runrun.sh GET "tasks/$lid")
+        if [[ ! -n "$task" ]]; then
+            err "task #$lid not found"
+            exit 1
+        fi
+        
+        project_id=$(echo "$task" | ./jprop.sh "['project_id']")
+        type=$(echo "$task" | ./jprop.sh "['type_id']")
+        team=$(echo "$task" | ./jprop.sh "['team_id']")
+    ;;
+    --everyone)
+        u_id=''
+    ;;
+    --project|-p)
+        shift
+        project_id="$1"
+    ;;
+    -*)
+        echo "bad option '$1'"
+        exit 1
+    ;;
+    esac
+    shift
+done
+
+while [[ $(nan "$project_id") == true ]]; do
+    if [[ ! -n "$project_id" ]]; then
+      info "to start a new task you need to be working on a project. enter desired project name:"
+      read project_id
+    fi
+
+    project_id=$(prompt_project_id "$project_id")
+done
 debug "project_id: $project_id"
 
-type=$(db CURR_TASK_TYPE)
 if [[ $(nan "$type") == true ]]; then
     err "current task type is not set correctly. please run gclit-rr-curr-task."
     exit 1
 fi
 debug "type: $type"
 
-team=$(db CURR_TASK_TEAM)
 if [[ $(nan "$team") == true ]]; then
     err "current task team is not set correctly. please run gclit-rr-curr-task."
     exit 1
@@ -40,7 +74,7 @@ fi
 debug "team: $team"
 
 debug "checking if $name already exists..."
-matches="$($MYDIR/rr-find-task.sh "$name")"
+matches="$($MYDIR/rr-find-task.sh "$name" -p "$project_id")"
 if [[ -n "$matches" ]]; then
   err "task already exists:"
   echo "$matches"

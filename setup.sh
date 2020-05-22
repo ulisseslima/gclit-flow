@@ -113,7 +113,7 @@ function prompt_project_task() {
                 read name_or_id
 
                 info "searching..."
-                task=$($MYDIR/rr-find-task.sh "$name_or_id" "$(echo $project | cut -d'=' -f1)")
+                task=$($MYDIR/rr-find-task.sh "$name_or_id" --project "$(echo $project | cut -d'=' -f1)")
                 n=$(echo "$task" | $MYDIR/lines.sh)
                 if [[ $n -gt 1 ]]; then
                     info "found $n results that match '$name_or_id':"
