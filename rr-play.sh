@@ -17,8 +17,8 @@ fi
 if [[ $(nan "$id") == true ]]; then
     err "arg 1 must be the task id"
     if [[ -n "$id" ]]; then
-        info "showing results for '$id'..."
-        $MYDIR/rr-find-task.sh "$id"
+        info "showing results for '$id' on project #$(db CURR_PROJECT_ID) ..."
+        $MYDIR/rr-find-task.sh "$@"
     fi
     
     info "choose one and try again"

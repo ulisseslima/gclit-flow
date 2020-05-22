@@ -25,7 +25,6 @@ if [[ "$1" != '-'* ]]; then
 fi
 
 project_id="$(db CURR_PROJECT_ID)"
-label=gclit
 
 while test $# -gt 0
 do
@@ -40,9 +39,16 @@ do
 
         project_id=$(prompt_project_id "$name_or_id")
     ;;
-    --label)
+    --like)
         shift
-        label="$1"
+        lid=$1
+        task=$($MYDIR/runrun.sh GET "tasks/$lid")
+        if [[ ! -n "$task" ]]; then
+            err "task #$lid not found"
+            exit 1
+        fi
+        
+        project_id=$(echo "$task" | ./jprop.sh "['project_id']")
     ;;
     -*)
         echo "bad option '$1'"
@@ -86,7 +92,7 @@ if [[ $REMOTE_FEATURES == true ]]; then
     git push -u origin $name
 fi
 
-$MYDIR/rr-new-task.sh "$name"
+$MYDIR/rr-new-task.sh "$name" -p $project_id
 
 info "additional project info on runrun..."
 $MYDIR/rr-comment.sh "started a new feature on $(project_url)"

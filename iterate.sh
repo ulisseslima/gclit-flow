@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/bin/bash -e
+MYSELF="$(readlink -f "$0")"
+MYDIR="${MYSELF%/*}"
+
 if [[ ! -n "$1" ]]; then
 	echo "iterates over lines from a variable."
 	echo ""
@@ -18,14 +21,16 @@ if [ ! -n "$2" ]; then
 	exit 1
 fi
 
-total=$(echo "$1" | lines.sh)
+total=$(echo "$1" | $MYDIR/lines.sh)
 
 i=0
 n=1
 while read line
 do
-	eval echo $2
-	((i++))
+	eval >&2 echo $2
+	
+	i=$((i+1))
 	((n++))
+	
 	sleep .1
 done < <(echo "$1")

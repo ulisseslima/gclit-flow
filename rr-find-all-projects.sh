@@ -25,7 +25,7 @@ do
 
     projects=$($MYDIR/runrun.sh GET "$query")
     if [[ -n "$projects" ]]; then
-        echo "$projects" | $MYDIR/jmap.py id name > "$tmp"
+        echo "$projects" | $MYDIR/jmap-project.py id name > "$tmp"
         cat "$tmp" >> "$PROJECTS"
         debug "$tmp"
     fi 
@@ -37,4 +37,4 @@ do
 	((page++))
 done
 
-info "$total projects cached (status: $?)"
+info "${PROJECTS}: $total projects cached (status: $?)"
