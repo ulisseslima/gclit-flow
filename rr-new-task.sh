@@ -10,7 +10,7 @@ source $MYDIR/log.sh
 source $MYDIR/db.sh
 
 name="$1"
-if [[ ! -n "$name" ]]; then
+if [[ ! -n "$name"　|| "$name" == '-'* ]]; then
     err "arg 1 must be task name"
     exit 1
 fi
@@ -32,9 +32,9 @@ do
             exit 1
         fi
         
-        project_id=$(echo "$task" | ./jprop.sh "['project_id']")
-        type=$(echo "$task" | ./jprop.sh "['type_id']")
-        team=$(echo "$task" | ./jprop.sh "['team_id']")
+        project_id=$(echo "$task" | $MYDIR/jprop.sh "['project_id']")
+        type=$(echo "$task" | $MYDIR/jprop.sh "['type_id']")
+        team=$(echo "$task" | $MYDIR/jprop.sh "['team_id']")
     ;;
     --everyone)
         u_id=''

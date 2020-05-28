@@ -32,5 +32,5 @@ do
 	i=$((i+1))
 	((n++))
 	
-	sleep .1
+	sleep .01
 done < <(echo "$1")

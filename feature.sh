@@ -48,7 +48,7 @@ do
             exit 1
         fi
         
-        project_id=$(echo "$task" | ./jprop.sh "['project_id']")
+        project_id=$(echo "$task" | $MYDIR/jprop.sh "['project_id']")
     ;;
     -*)
         echo "bad option '$1'"

@@ -30,7 +30,7 @@ do
             err "task #$lid not found"
             exit 1
         fi
-        p_id=$(echo "$task" | ./jprop.sh "['project_id']")
+        p_id=$(echo "$task" | $MYDIR/jprop.sh "['project_id']")
     ;;
     --everyone)
         u_id=''
@@ -61,5 +61,5 @@ fi
 
 json=$($MYDIR/runrun.sh GET "tasks?project_id=$p_id&user_id=$u_id")
 if [[ -n "$json" ]]; then
-    echo "$json" | $MYDIR/jmap.py id title | grep -iP "$regex" || true
+    echo "$json" | $MYDIR/jmap-task.py id title | grep -iP "$regex" || true
 fi
