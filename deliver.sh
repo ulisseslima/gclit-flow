@@ -64,6 +64,8 @@ if [[ $mr == false || $(project_url) == *github* ]]; then
     if [[ $FEATURE_DELETE_WHEN_DELIVERED == true ]]; then
         info "deleting '$name' branch..."
         git branch -d "$name"
+    else
+        info "delete local branch with: git branch -d $name"
     fi
 fi
 

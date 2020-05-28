@@ -12,8 +12,15 @@ source $MYDIR/db.sh
 id="$(db CURR_TASK_ID)"
 name="$(db CURR_TASK_NAME)"
 
+debug "adding comment..."
+
 if [[ $(nan "$id") == true ]]; then
-    err "no tasks are running"
+    debug "trying to refresh current task..."
+    $MYDIR/rr-curr-task.sh
+fi
+
+if [[ $(nan "$id") == true ]]; then
+    err "no tasks are running, can't comment"
     exit 1
 fi
 
@@ -22,6 +29,8 @@ if [[ ! -n "$comment" ]]; then
     err "first arg must be comment message"
     exit 1
 fi
+
+debug "$comment"
 
 json=$($MYDIR/runrun.sh POST comments "{
   \"task_id\": $id,

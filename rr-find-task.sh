@@ -50,16 +50,18 @@ do
 done
 
 if [[ ! -n "$p_id" ]]; then
-    err "no project selected, arg --project must be the project name or ID"
+    err "no project selected, specify with --project <name or ID>"
     exit 1
 fi
 
-debug "searching for task like '$regex' on project $p_id - u_id=$u_id ..."
+debug "searching for task like '$regex' on project '$p_id' - u_id='$u_id' ..."
 if [[ -n "$u_id" ]]; then
     debug "filtering by tasks created by $u_id"
 fi
 
 json=$($MYDIR/runrun.sh GET "tasks?project_id=$p_id&user_id=$u_id")
 if [[ -n "$json" ]]; then
+    debug "task found"
     echo "$json" | $MYDIR/jmap-task.py id title | grep -iP "$regex" || true
+    debug "task parsed"
 fi
