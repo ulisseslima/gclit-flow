@@ -31,7 +31,7 @@ do
     shift
 done
 
-if [[ ! -f $STORE ]]; then
+if [[ ! -f $STORE || $($MYDIR/lines.sh $STORE) -eq 0 ]]; then
     $MYDIR/rr-find-all-projects.sh
 fi
 

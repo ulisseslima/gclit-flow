@@ -58,9 +58,12 @@ if [[ -n "$json" ]]; then
     db CURR_TASK_ID "${t_id}"
     db CURR_TASK_NAME "${t_name}"
     db CURR_TASK_TYPE "${t_type}"
-
+    
     t_team=$(echo "$json" | $MYDIR/jprop.sh "['team_id']")
     db CURR_TASK_TEAM "${t_team}"
+    
+    t_ass=$(echo "$json" | $MYDIR/jprop.sh "['assignments'][0]['id']")
+    db CURR_TASK_ASS "${t_ass}"
 
     echo "https://runrun.it/en-US/tasks/${t_id}"
 fi

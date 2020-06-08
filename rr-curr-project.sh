@@ -27,5 +27,8 @@ if [[ -n "$json" && "$json" != '[]' ]]; then
     t_team=$(echo "$json" | $MYDIR/jprop.sh "[0]['team_id']")
     db CURR_TASK_TEAM "${t_team}"
 
+    t_ass=$(echo "$json" | $MYDIR/jprop.sh "['assignments'][0]['id']")
+    db CURR_TASK_ASS "${t_ass}"
+
     echo "${p_id}=${p_name}"
 fi

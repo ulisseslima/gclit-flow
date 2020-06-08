@@ -61,7 +61,10 @@ fi
 
 json=$($MYDIR/runrun.sh GET "tasks?project_id=$p_id&user_id=$u_id")
 if [[ -n "$json" ]]; then
-    debug "task found"
-    echo "$json" | $MYDIR/jmap-task.py id title | grep -iP "$regex" || true
-    debug "task parsed"
+    debug "tasks found:"
+    matches=$(echo "$json" | $MYDIR/jmap-task.py id title | grep -iP "$regex" || true)
+    debug "$matches"
+    
+    echo "$matches"
+    debug "matches parsed"
 fi
