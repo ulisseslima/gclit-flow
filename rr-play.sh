@@ -52,6 +52,8 @@ if [[ -n "$json" ]]; then
     p_id=$(echo "$json" | $MYDIR/jprop.sh "['project_id']")
     p_name=$(echo "$json" | $MYDIR/jprop.sh "['project_name']")
 
+    db LAST_TASK_ID "$(db CURR_TASK_ID)"
+
     db CURR_PROJECT_ID "${p_id}"
     db CURR_PROJECT_NAME "${p_name}"
     
@@ -65,5 +67,5 @@ if [[ -n "$json" ]]; then
     t_ass=$(echo "$json" | $MYDIR/jprop.sh "['assignments'][0]['id']")
     db CURR_TASK_ASS "${t_ass}"
 
-    echo "https://runrun.it/en-US/tasks/${t_id}"
+    echo "$t_name - https://runrun.it/en-US/tasks/${t_id}"
 fi
