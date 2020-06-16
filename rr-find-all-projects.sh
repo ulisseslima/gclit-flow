@@ -19,8 +19,7 @@ total=0
 while [[ $count -ge $max_results ]]
 do
 	debug "page: $page"
-    
-    query="projects?sort=name&page=$page"
+    query="projects?exclude_inactive_clients=true&is_closed=false&sort=name&page=$page"
     tmp="$PROJECTS.$page.tmp"
 
     projects=$($MYDIR/runrun.sh GET "$query")

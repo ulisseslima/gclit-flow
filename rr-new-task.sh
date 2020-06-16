@@ -105,7 +105,9 @@ json=$($MYDIR/runrun.sh POST tasks "{
 }")
 
 if [[ "$json" == *'error'* ]]; then
-    err "problem creating task '$name', check cached response with $MYDIR/last-response.sh"
+    err "problem creating task '$name' on project #$project_id:"
+    echo "$json" | $MYDIR/jprop.sh "['errors']"
+    info "check cached response with $MYDIR/last-response.sh"
 else
     debug "parsing task response id..."
     t_id=$(echo "$json" | $MYDIR/jprop.sh "['id']")
