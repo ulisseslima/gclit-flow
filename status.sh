@@ -9,7 +9,7 @@ source $MYDIR/env
 source $MYDIR/log.sh
 source $MYDIR/db.sh
 
-curr=$($MYDIR/rr-curr-task.sh)
+curr=$($MYDIR/rr-sync-task.sh)
 db_dump
 
 if [[ -n "$curr" ]]; then

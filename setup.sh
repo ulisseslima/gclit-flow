@@ -80,7 +80,7 @@ function prompt_project_task() {
         $MYDIR/rr-play.sh
     else
         info "defining current project..."
-        project="$($MYDIR/rr-curr-project.sh)"
+        project="$($MYDIR/rr-sync-project.sh)"
         new_project=false
 
         while [[ ! -n "$project" ]]

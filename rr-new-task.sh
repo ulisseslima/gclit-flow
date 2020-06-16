@@ -62,13 +62,13 @@ done
 debug "project_id: $project_id"
 
 if [[ $(nan "$type") == true ]]; then
-    err "current task type is not set correctly. please run gclit-rr-curr-task."
+    err "current task type is not set correctly. please run gclit-rr-sync-task."
     exit 1
 fi
 debug "type: $type"
 
 if [[ $(nan "$team") == true ]]; then
-    err "current task team is not set correctly. please run gclit-rr-curr-task."
+    err "current task team is not set correctly. please run gclit-rr-sync-task."
     exit 1
 fi
 debug "team: $team"

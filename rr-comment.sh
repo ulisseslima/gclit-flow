@@ -16,7 +16,7 @@ debug "adding comment..."
 
 if [[ $(nan "$id") == true ]]; then
     debug "trying to refresh current task..."
-    $MYDIR/rr-curr-task.sh
+    $MYDIR/rr-sync-task.sh
 fi
 
 if [[ $(nan "$id") == true ]]; then
