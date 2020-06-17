@@ -170,6 +170,50 @@ function uninstall() {
     sudo rm -f /usr/local/bin/${INSTALL_PREFIX}-*
 }
 
+function local_db() {
+    info "checking if dpkg is available..."
+    [[ ! -n "$(which dpkg)" ]] && return 0
+    
+    info "checking if postgresql client is available..."
+    [[ "$(dpkg -l | grep -c postgresql-client)" -lt 1 ]] && return 0
+
+    info "checking if postgresql server is available..."
+    [[ "$(dpkg -l | grep postgresql | grep -c server)" -lt 1 ]] && return 0
+
+    info "checking if db already created..."
+    if [[ -n "$($MYDIR/psql.sh 'select id from tasks limit 1')" ]]; then
+        info "database already created."
+    else
+        info "we detected you have a postgresql server. do you want to enable a local timesheet? (Y/n)"
+        read answer
+
+        # defaults to yes
+        [[ ! -n "$answer" ]] && answer=y
+
+        # if answer (to lower case) starts with "y", continue installation
+        [[ ${answer,} != y* ]] && return 0
+
+        info "creating database..."
+        $MYDIR/psql.sh --create-db
+        $MYDIR/psql.sh $MYDIR/db/timesheet.sql
+
+        info "creating default project..."
+        $MYDIR/psql.sh "insert into projects (name) select 'default'"
+
+        info "mapping default project..."
+        row=$($MYDIR/psql-map.sh projects 'id,name' "name='default'")
+        echo $row
+
+        if [[ ! -n "$row" ]]; then
+            err "could not complete local db installation"
+            exit 1
+        fi
+
+        db DB_ENABLED yes
+        info "local task creation enabled"
+    fi
+}
+
 ##
 # build initial config.
 function wizard() {
@@ -189,6 +233,8 @@ function wizard() {
 
     $MYDIR/rr-find-all-projects.sh
     prompt_project_task
+
+    local_db
 
 	debug "local settings saved to $LOCAL_ENV"
 }
