@@ -1,15 +1,24 @@
 -- db
--- create database if not exists timesheet;
+-- create database timesheet;
 
-create table projects (id serial, external_id text, name text unique not null);
-create table executions (id serial, task_id bigint, start timestamp, finish timestamp, elapsed interval);
+create table projects (id serial PRIMARY KEY, external_id text, name text unique not null);
+-- insert into projects (name) select 'default';
+
 create table tasks (
-  id serial, 
+  id serial PRIMARY KEY, 
   external_id text,
   name text unique not null, 
-  project_id bigint, 
+  project_id bigint REFERENCES projects on DELETE CASCADE, 
   closed boolean not null default false, 
   start timestamp not null default now(), 
   finish timestamp, 
   elapsed interval not null default '0'
+);
+
+create table executions (
+  id serial PRIMARY KEY, 
+  task_id bigint REFERENCES tasks on DELETE CASCADE, 
+  start timestamp, 
+  finish timestamp, 
+  elapsed interval
 );
