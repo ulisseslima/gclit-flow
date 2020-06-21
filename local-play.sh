@@ -57,6 +57,18 @@ function pause() {
     ;"
 }
 
+##
+# @return last comments 
+function comment() {
+    task_id="$1"
+    content="$2"
+
+    $MYDIR/psql.sh "insert into comments (task_id, content)
+     select $task_id, '$content' 
+     returning *
+    ;"
+}
+
 name="$1"
 project_id="${2:-1}"
 new=false

@@ -1,4 +1,5 @@
 -- db
+-- TODO auto update support
 -- create database timesheet;
 
 create table projects (id serial PRIMARY KEY, external_id text, name text unique not null);
@@ -21,4 +22,11 @@ create table executions (
   start timestamp, 
   finish timestamp, 
   elapsed interval
+);
+
+create table comments (
+  id serial PRIMARY KEY, 
+  task_id bigint REFERENCES tasks on DELETE CASCADE, 
+  stamp timestamp not null default now(), 
+  content text
 );
