@@ -25,10 +25,12 @@ fi
 
 condition="${3:-1=1}"
 
-row=$($X/psql.sh "select $cols from $table where $condition" -s '|')
-if [[ -n "$row" ]]; then
-    IFS='|' read -r -a array <<< "$row"
+while read row
+do
+    if [[ -n "$row" ]]; then
+        IFS='|' read -r -a array <<< "$row"
 
-    key="${array[0]}"; unset "array[0]"
-    echo "$key=${array[@]}"
-fi
+        key="${array[0]}"; unset "array[0]"
+        echo "$key=${array[@]}"
+    fi
+done < <($X/psql.sh "select $cols from $table where $condition" -s '|')

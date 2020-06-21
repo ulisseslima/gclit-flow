@@ -26,6 +26,34 @@ function new_task() {
     ;"
 }
 
+function open_tasks() {
+    $MYDIR/psql-map.sh tasks \
+        "id,name,elapsed" \
+        "closed is false order by start"
+}
+
+##
+# finishes unclosed executions
+function check_open_executions() {
+    debug "checking open executions..."
+
+    while read open_execution
+    do
+        tid=$(echo $open_execution | cut -d'=' -f1)
+        tname=$(echo $open_execution | cut -d'=' -f2)
+
+        info "you were previously working on '$tname', ending open executions for task #$tid ..."
+        comment $tid "started work on task #$task_id"
+
+        pause $task_id
+    done < <($MYDIR/psql-map.sh \
+        "executions e join tasks t on t.id=e.task_id" \
+        "t.id,t.name" \
+        "task_id <> $task_id and e.finish is null group by t.id")
+
+    debug "open executions checked"
+}
+
 ##
 # @return execution if created
 function play() {
@@ -39,6 +67,8 @@ function play() {
      WHERE NOT EXISTS (SELECT * FROM open_execution)
      RETURNING *
     ;"
+
+    check_open_executions
 }
 
 ##
@@ -55,6 +85,8 @@ function pause() {
      where id = $task_id
      returning *
     ;"
+
+    check_open_executions
 }
 
 ##
@@ -70,6 +102,17 @@ function comment() {
 }
 
 name="$1"
+if [[ "$name" == '-l' ]]; then
+    open_tasks
+    exit 0
+fi
+
+if [[ "$name" == '-r' ]]; then
+    info "deleting last task..."
+    $MYDIR/psql.sh "delete from tasks where id = (select id from tasks order by id desc limit 1) returning *"
+    exit 0
+fi
+
 project_id="${2:-1}"
 new=false
 
@@ -112,3 +155,8 @@ fi
 
 info -n "latest executions:"
 $MYDIR/psql.sh "select * from executions where task_id = $task_id order by id desc limit 5" --full
+
+# TODO 
+# - allow ctrl z of last task created
+# - query last executions
+# - comment insertions
