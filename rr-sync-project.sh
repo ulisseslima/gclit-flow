@@ -25,7 +25,11 @@ if [[ -n "$json" && "$json" != '[]' ]]; then
     db CURR_TASK_TYPE "${t_type}"
 
     t_team=$(echo "$json" | $MYDIR/jprop.sh "[0]['team_id']")
+    if [[ ! -n "$t_team" || "$t_team" == null || "$t_team" == None ]]; then
+        t_team=$(echo "$json" | $MYDIR/jprop.sh "[0]['assignments'][0]['team_id']")
+    fi
     db CURR_TASK_TEAM "${t_team}"
+    info "af 1: ${t_team}"
 
     t_ass=$(echo "$json" | $MYDIR/jprop.sh "['assignments'][0]['id']")
     db CURR_TASK_ASS "${t_ass}"

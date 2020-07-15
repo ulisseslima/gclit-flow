@@ -35,6 +35,10 @@ do
         project_id=$(echo "$task" | $MYDIR/jprop.sh "['project_id']")
         type=$(echo "$task" | $MYDIR/jprop.sh "['type_id']")
         team=$(echo "$task" | $MYDIR/jprop.sh "['team_id']")
+        
+        if [[ ! -n "$team" || "$team" == null || "$team" == None ]]; then
+          team=$(echo "$task" | $MYDIR/jprop.sh "['assignments'][0]['team_id']")
+        fi
     ;;
     --everyone)
         u_id=''
@@ -61,17 +65,17 @@ while [[ $(nan "$project_id") == true ]]; do
 done
 debug "project_id: $project_id"
 
-if [[ $(nan "$type") == true ]]; then
-    err "current task type is not set correctly. please run gclit-rr-sync-task."
-    exit 1
-fi
 debug "type: $type"
-
-if [[ $(nan "$team") == true ]]; then
-    err "current task team is not set correctly. please run gclit-rr-sync-task."
+if [[ $(nan "$type") == true ]]; then
+    err "current task type is not set correctly. please run gclit-sync-task."
     exit 1
 fi
+
 debug "team: $team"
+if [[ $(nan "$team") == true ]]; then
+    err "current task team is not set correctly. please run gclit-sync-task."
+    exit 1
+fi
 
 debug "checking if $name already exists..."
 matches="$($MYDIR/rr-find-task.sh "$name" -p "$project_id")"

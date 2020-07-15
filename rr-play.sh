@@ -14,6 +14,11 @@ if [[ ! -n "$id" ]]; then
     id="$(db CURR_TASK_ID)"
 fi
 
+if [[ "$id" == '#'* ]]; then
+    debug "removing hash..."
+    id="${id/#/}"
+fi
+
 if [[ $(nan "$id") == true ]]; then
     err "arg 1 must be the task id"
     if [[ -n "$id" ]]; then
@@ -62,7 +67,11 @@ if [[ -n "$json" ]]; then
     db CURR_TASK_TYPE "${t_type}"
     
     t_team=$(echo "$json" | $MYDIR/jprop.sh "['team_id']")
+    if [[ ! -n "$t_team" || "$t_team" == null || "$t_team" == None ]]; then
+        t_team=$(echo "$json" | $MYDIR/jprop.sh "[0]['assignments'][0]['team_id']")
+    fi
     db CURR_TASK_TEAM "${t_team}"
+    info "af 2: ${t_team}"
     
     t_ass=$(echo "$json" | $MYDIR/jprop.sh "['assignments'][0]['id']")
     db CURR_TASK_ASS "${t_ass}"
