@@ -68,7 +68,7 @@ if [[ -n "$json" ]]; then
     
     t_team=$(echo "$json" | $MYDIR/jprop.sh "['team_id']")
     if [[ ! -n "$t_team" || "$t_team" == null || "$t_team" == None ]]; then
-        t_team=$(echo "$json" | $MYDIR/jprop.sh "[0]['assignments'][0]['team_id']")
+        t_team=$(echo "$json" | $MYDIR/jprop.sh "['assignments'][0]['team_id']")
     fi
     db CURR_TASK_TEAM "${t_team}"
     info "af 2: ${t_team}"
