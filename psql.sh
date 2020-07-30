@@ -45,7 +45,7 @@ do
         ops="$1"
     ;;
     --full)
-        ops="c1"
+        ops="c"
     ;;
     -*)
         echo "bad option '$1'"
