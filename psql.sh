@@ -24,7 +24,8 @@ if [[ "$query" == --create-db ]]; then
     psql -U $DB_USER -c "create database $DB_NAME"
     exit 0
 fi
-  
+
+# TODO support for different ports and hosts
 connection="psql -U $DB_USER $DB_NAME"
 ops='qAtX'
 
@@ -56,7 +57,7 @@ do
 done
 
 if [[ -f "$query" ]]; then
-    $connection -$ops -F"$separator" < "$query"
+    $connection -$ops --field-separator="$separator" < "$query"
 else
-    $connection -$ops -F"$separator" -c "$query"
+    $connection -$ops --field-separator="$separator" -c "$query"
 fi
