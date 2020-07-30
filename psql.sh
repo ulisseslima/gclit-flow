@@ -24,9 +24,14 @@ if [[ "$query" == --create-db ]]; then
     psql -U $DB_USER -c "create database $DB_NAME"
     exit 0
 fi
-
+  
 connection="psql -U $DB_USER $DB_NAME"
 ops='qAtX'
+
+if [[ "$query" == --connection ]]; then
+    echo "$connection"
+    exit 0
+fi
 
 while test $# -gt 0
 do
