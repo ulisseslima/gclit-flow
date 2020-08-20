@@ -1,5 +1,8 @@
 #!/bin/bash -e
 # @installable
+
+# TODO bring current task time
+
 MYSELF="$(readlink -f "$0")"
 MYDIR="${MYSELF%/*}"
 ME=$(basename $MYSELF)

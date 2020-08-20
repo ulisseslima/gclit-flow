@@ -16,7 +16,8 @@ if [[ ! -n "$regex" ]]; then
 fi
 shift
 
-p_id="$(db CURR_PROJECT_ID)"
+#p_id="$(db CURR_PROJECT_ID)"
+p_id="any"
 u_id=$(rr_user_id)
 
 while test $# -gt 0
@@ -37,6 +38,9 @@ do
     ;;
     --any)
         p_id='any'
+    ;;
+    --current)
+        p_id="$(db CURR_PROJECT_ID)"
     ;;
     --project|-p)
         shift

@@ -59,6 +59,12 @@ function check_open_executions() {
 function play() {
     task_id="$1"
 
+    if [[ ! -n "$task_id" ]]; then
+        err "task id cannot be null"
+        exit 1
+    fi
+
+    check_open_executions
     $MYDIR/psql.sh "WITH open_execution AS (
      select * from executions where task_id = $task_id AND finish is null
      ) INSERT INTO executions
@@ -67,8 +73,6 @@ function play() {
      WHERE NOT EXISTS (SELECT * FROM open_execution)
      RETURNING *
     ;"
-
-    check_open_executions
 }
 
 ##
@@ -76,6 +80,12 @@ function play() {
 function pause() {
     task_id="$1"
 
+    if [[ ! -n "$task_id" ]]; then
+        err "task id cannot be null"
+        exit 1
+    fi
+
+    check_open_executions
     $MYDIR/psql.sh "WITH execution AS (
      UPDATE executions 
      SET finish = now(), elapsed = (now() - start)
@@ -85,8 +95,6 @@ function pause() {
      where id = $task_id
      returning *
     ;"
-
-    check_open_executions
 }
 
 ##
@@ -101,29 +109,69 @@ function comment() {
     ;"
 }
 
+##
+# @return tasks that match name 
+function find() {
+    task_id="$1"
+    content="$2"
+
+    $MYDIR/psql.sh "insert into comments (task_id, content)
+     select $task_id, '$content' 
+     returning *
+    ;"
+}
+
 name="$1"
-if [[ "$name" == '-l' ]]; then
-    open_tasks
-    exit 0
+
+project_id=1
+if [[ -n "$2" && "$2" != -* ]]; then
+    project_id="${2}"
 fi
 
-if [[ "$name" == '-r' ]]; then
-    info "deleting last task..."
-    $MYDIR/psql.sh "delete from tasks where id = (select id from tasks order by id desc limit 1) returning *"
-    exit 0
-fi
-
-project_id="${2:-1}"
 new=false
 
+while test $# -gt 0
+do
+    case "$1" in
+    --list|-l) 
+        open_tasks
+        exit 0
+    ;;
+    --remove-last|-r) 
+        info "deleting last task..."
+        $MYDIR/psql.sh "delete from tasks where id = (select id from tasks order by id desc limit 1) returning *"
+        exit 0
+    ;;
+    --connect|-c) 
+        info "connecting to local db..."
+        psql -U $DB_USER $DB_NAME
+        exit 0
+    ;;
+    --find|-f)
+        shift
+        search="$1"
+        info "finding last 5 tasks like '$search' ..."
+        $MYDIR/psql.sh "select * from tasks where name ilike '%$search%' order by id desc limit 5;" --full
+        exit 0
+    ;;
+    -*) 
+      echo "bad option '$1'"
+      exit 1
+    ;;
+    esac
+    shift
+done
+
 if [[ -n "$name" ]]; then
-    debug "will work with task '$name' ..."
+    debug "will work with task '$name' on project '$project_id' ..."
     task=$(new_task "$name" $project_id)
     if [[ -n "$task" ]]; then
+        debug "task not null"
         task_id=$(echo "$task" | cut -d'|' -f1)
         info "task $name created with id $task_id"
         new=true
     else
+        debug "task null..."
         task=$($MYDIR/psql.sh "select t.id,e.finish from tasks t join executions e on e.task_id=t.id where t.name = '$name' order by e.id desc limit 1")
         task_id=$(echo $task | cut -d'|' -f1)
         finish=$(echo $task | cut -d'|' -f2)
