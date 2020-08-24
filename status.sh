@@ -15,6 +15,9 @@ source $MYDIR/db.sh
 echo "MYDIR=$MYDIR"
 
 curr=$($MYDIR/rr-sync-task.sh)
+t_id=$(echo $curr | cut -d'=' -f1)
+t_name=$(echo $curr | cut -d'=' -f2)
+
 db_dump
 
 info -n "local db:"
@@ -25,6 +28,7 @@ if [[ -n "$curr" ]]; then
 else
     info -n "task is currently stopped."
 fi
+echo "$t_name - https://runrun.it/en-US/tasks/${t_id}"
 
 info -n "latest local executions:"
 $MYDIR/psql.sh \
