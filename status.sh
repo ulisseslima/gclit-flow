@@ -18,6 +18,7 @@ curr=$($MYDIR/rr-sync-task.sh)
 t_id=$(echo $curr | cut -d'=' -f1)
 t_name=$(echo $curr | cut -d'=' -f2)
 
+echo "runrun user id: $(rr_user_id)"
 db_dump
 
 info -n "local db:"

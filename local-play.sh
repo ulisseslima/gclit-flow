@@ -201,7 +201,7 @@ else
     fi
 fi
 
-info -n "latest executions:"
+info -n "latest executions from '$name':"
 $MYDIR/psql.sh "select * from executions where task_id = $task_id order by id desc limit 5" --full
 
 # TODO 

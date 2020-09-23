@@ -9,14 +9,23 @@ source $MYDIR/env
 source $MYDIR/log.sh
 source $MYDIR/db.sh
 
-id="$(db CURR_TASK_ID)"
-if [[ $(nan "$id") == true ]]; then
-    info "no tasks were running"
-    exit 0
-fi
+id="$1"
+if [[ -n "$id" ]]; then
+	json=$($MYDIR/runrun.sh GET "tasks/$id")
+    
+    name=$(echo "$json" | $MYDIR/jprop.sh "['title']")
+    ass=$(echo "$json" | $MYDIR/jprop.sh "['assignments'][0]['id']")
+else
+    id="$(db CURR_TASK_ID)"
 
-name="$(db CURR_TASK_NAME)"
-ass="$(db CURR_TASK_ASS)"
+    if [[ $(nan "$id") == true ]]; then
+        info "no tasks were running"
+        exit 0
+    fi
+    
+    name="$(db CURR_TASK_NAME)"
+    ass="$(db CURR_TASK_ASS)"
+fi
 
 info "delivering #$id: '$name', assignment '$ass' ..."
 json=$($MYDIR/runrun.sh POST "tasks/$id/assignments/$ass/deliver")
