@@ -35,7 +35,9 @@ function open_tasks() {
 ##
 # finishes unclosed executions
 function check_open_executions() {
-    debug "checking open executions..."
+    chktid=$1
+    debug "checking open executions for $chktid ..."
+    ex=false
 
     while read open_execution
     do
@@ -43,68 +45,83 @@ function check_open_executions() {
         tname=$(echo $open_execution | cut -d'=' -f2)
 
         info "you were previously working on '$tname', ending open executions for task #$tid ..."
-        comment $tid "started work on task #$task_id"
+        comment $tid "started work on task #$chktid"
 
-        pause $task_id
+        pause $tid
+        ex=true
     done < <($MYDIR/psql-map.sh \
         "executions e join tasks t on t.id=e.task_id" \
         "t.id,t.name" \
-        "task_id <> $task_id and e.finish is null group by t.id")
+        "task_id <> $chktid and e.finish is null group by t.id")
 
-    debug "open executions checked"
+    debug "open executions checked for $chktid"
+    if [[ $ex == true ]]; then
+        debug "...and found"
+    fi
 }
 
 ##
 # @return execution if created
 function play() {
-    task_id="$1"
+    pltask_id="$1"
 
-    if [[ ! -n "$task_id" ]]; then
+    if [[ ! -n "$pltask_id" ]]; then
         err "task id cannot be null"
         exit 1
     fi
 
-    check_open_executions
+    debug "playing #$pltask_id ..."
+
+    check_open_executions $pltask_id
+
+    debug "creating execution if not exists for $pltask_id ..."
     $MYDIR/psql.sh "WITH open_execution AS (
-     select * from executions where task_id = $task_id AND finish is null
+     select * from executions where task_id = $pltask_id AND finish is null
      ) INSERT INTO executions
      (task_id, start)
-     SELECT $task_id, now()
+     SELECT $pltask_id, now()
      WHERE NOT EXISTS (SELECT * FROM open_execution)
      RETURNING *
     ;"
 }
 
 ##
-# @return 
+# @return updated task
 function pause() {
-    task_id="$1"
+    ptask_id="$1"
 
-    if [[ ! -n "$task_id" ]]; then
+    if [[ ! -n "$ptask_id" ]]; then
         err "task id cannot be null"
         exit 1
     fi
 
-    check_open_executions
+    debug "#$ptask_id - starting pause process..."
+
+    check_open_executions $ptask_id
+
     $MYDIR/psql.sh "WITH execution AS (
      UPDATE executions 
      SET finish = now(), elapsed = (now() - start)
-     WHERE task_id = $task_id AND finish is null
+     WHERE task_id = $ptask_id AND finish is null
      RETURNING *
      ) update tasks set elapsed = elapsed + (select elapsed from execution)
-     where id = $task_id
+     where id = $ptask_id
      returning *
     ;"
+
+    debug "#$ptask_id - finished pause process"
 }
 
 ##
 # @return last comments 
 function comment() {
-    task_id="$1"
+    ctask_id="$1"
     content="$2"
 
+    debug "// $content"
+
     $MYDIR/psql.sh "insert into comments (task_id, content)
-     select $task_id, '$content' 
+     select $ctask_id, '$content' 
      returning *
     ;"
 }
@@ -122,10 +139,14 @@ function find() {
 }
 
 name="$1"
+if [[ -n "$1" && "$1" != -* ]]; then
+    shift
+fi
 
 project_id=1
-if [[ -n "$2" && "$2" != -* ]]; then
-    project_id="${2}"
+if [[ -n "$1" && "$1" != -* ]]; then
+    project_id="${1}"
+    shift
 fi
 
 new=false
@@ -166,13 +187,14 @@ if [[ -n "$name" ]]; then
     debug "will work with task '$name' on project '$project_id' ..."
     task=$(new_task "$name" $project_id)
     if [[ -n "$task" ]]; then
-        debug "task not null"
         task_id=$(echo "$task" | cut -d'|' -f1)
+        debug "created new '$name' task, no previous tasks found"
         info "task $name created with id $task_id"
         new=true
     else
-        debug "task null..."
+        debug "previously open tasks for '$name' found, looking for latest task execution ..."
         task=$($MYDIR/psql.sh "select t.id,e.finish from tasks t join executions e on e.task_id=t.id where t.name = '$name' order by e.id desc limit 1")
+        
         task_id=$(echo $task | cut -d'|' -f1)
         finish=$(echo $task | cut -d'|' -f2)
     fi
@@ -192,16 +214,31 @@ if [[ -n "$finish" || $new == true ]]; then
         err "couldn't play '$name' ..."
     fi
 else
-    debug "null finish"
+    debug "...none finished"
+    
+    if [[ ! -n "$task_id" ]]; then
+        debug "finding task id by last task with name..."
+        task=$($MYDIR/psql.sh "select t.id from tasks t where t.name = '$name' order by t.id desc limit 1")
+        task_id=$(echo $task | cut -d'|' -f1)
+        debug "found: $task_id"
+    fi
+
     execution=$(pause $task_id)
     if [[ -n "$execution" ]]; then
         info "paused '$name' !"
     else
-        err "couldn't pause '$name' ..."
+        info "couldn't pause '$name' ..."
+        
+        execution=$(play $task_id)
+        if [[ -n "$execution" ]]; then
+            info "playing '$name' !"
+        else
+            err "couldn't play '$name' ..."
+        fi
     fi
 fi
 
-info -n "latest executions from '$name':"
+info -n "latest executions from '$name' (#$task_id):"
 $MYDIR/psql.sh "select * from executions where task_id = $task_id order by id desc limit 5" --full
 
 # TODO 
