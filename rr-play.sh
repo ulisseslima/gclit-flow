@@ -76,4 +76,5 @@ if [[ -n "$json" ]]; then
     db CURR_TASK_ASS "${t_ass}"
 
     echo "$t_name - https://runrun.it/en-US/tasks/${t_id}"
+    $MYDIR/local-play.sh "$t_name"
 fi

@@ -35,4 +35,5 @@ elif [[ "$json" == *'error'* ]]; then
     echo "$json"
 else
     info "'$name' paused."
+    $MYDIR/local-play.sh
 fi

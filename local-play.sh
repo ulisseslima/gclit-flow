@@ -209,7 +209,7 @@ if [[ -n "$finish" || $new == true ]]; then
     debug "finish: '$finish', new: $new"
     execution=$(play $task_id)
     if [[ -n "$execution" ]]; then
-        info "playing '$name' !"
+        info "playing '$name' locally!"
     else
         err "couldn't play '$name' ..."
     fi
@@ -225,13 +225,13 @@ else
 
     execution=$(pause $task_id)
     if [[ -n "$execution" ]]; then
-        info "paused '$name' !"
+        info "paused '$name' locally!"
     else
         info "couldn't pause '$name' ..."
         
         execution=$(play $task_id)
         if [[ -n "$execution" ]]; then
-            info "playing '$name' !"
+            info "playing '$name' locally!"
         else
             err "couldn't play '$name' ..."
         fi
@@ -241,7 +241,8 @@ fi
 info -n "latest executions from '$name' (#$task_id):"
 $MYDIR/psql.sh "select * from executions where task_id = $task_id order by id desc limit 5" --full
 
+$MYDIR/elapsed.sh
+
 # TODO 
-# - allow ctrl z of last task created
 # - query last executions
 # - comment insertions

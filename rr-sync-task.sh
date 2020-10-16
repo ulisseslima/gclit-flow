@@ -24,7 +24,7 @@ if [[ '[]' == "$json" ]]; then
     ongoing=$($MYDIR/runrun.sh GET "tasks?is_working_on=true")
     task_id=$(node $MYDIR/find-user-execution.js $(rr_user_id) "$ongoing")
     if [[ ! -n "$task_id" ]]; then
-        info "couldn't find any tasks"
+        info "couldn't find any ongoing tasks"
         exit 1
     fi
 
