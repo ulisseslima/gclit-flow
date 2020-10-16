@@ -13,3 +13,6 @@ comment="$1"
 debug "new local comment: $comment"
 $MYDIR/psql.sh \
     "insert into comments (task_id, content) select t.id, '$comment' from executions e join tasks t on t.id=e.task_id order by e.id desc limit 1;"
+
+$MYDIR/psql.sh \
+    "select stamp, content from executions e join tasks t on t.id=e.task_id join comments c on c.task_id=t.id order by c.id desc limit 5"
