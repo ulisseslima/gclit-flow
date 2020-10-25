@@ -30,10 +30,11 @@ json=$($MYDIR/runrun.sh POST "tasks/$id/pause")
 if [[ "$json" == *'already paused'* ]]; then
     # TODO pesquisar em andamento se não for essa
     info "'$name' was already paused!"
+    exit 1
 elif [[ "$json" == *'error'* ]]; then
     err "error pausing '$name'!"
     echo "$json"
 else
     info "'$name' paused."
-    $MYDIR/local-play.sh
+    $MYDIR/local-play.sh --pause
 fi

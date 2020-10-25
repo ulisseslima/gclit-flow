@@ -19,8 +19,8 @@ function new_task() {
      select * from tasks 
      where name = '$name' and project_id = $project_id
      ) INSERT INTO tasks
-     (name, project_id) 
-     SELECT '$name', $project_id 
+     (name, project_id, external_id) 
+     SELECT '$name', $project_id, '$external_id'
      WHERE NOT EXISTS (SELECT * FROM existing_task)
      RETURNING *
     ;"
@@ -144,18 +144,26 @@ if [[ -n "$1" && "$1" != -* ]]; then
 fi
 
 project_id=1
-if [[ -n "$1" && "$1" != -* ]]; then
-    project_id="${1}"
-    shift
-fi
-
+external_id=''
 new=false
+pausing=false
 
 while test $# -gt 0
 do
     case "$1" in
     --list|-l) 
         open_tasks
+        exit 0
+    ;;
+    --status|-s) 
+        $MYDIR/psql.sh "
+            select 
+                t.name, e.start, e.finish, (coalesce(e.finish, now())-e.start) elapsed 
+            from executions e 
+            join tasks t on t.id=e.task_id 
+            order by e.id desc 
+            limit 1
+        ;" --full
         exit 0
     ;;
     --remove-last|-r) 
@@ -174,6 +182,19 @@ do
         info "finding last 5 tasks like '$search' ..."
         $MYDIR/psql.sh "select * from tasks where name ilike '%$search%' order by id desc limit 5;" --full
         exit 0
+    ;;
+    --project|-p)
+        shift
+        project_id="${1}"
+    ;;
+    --external-id|--ex)
+        shift
+        external_id=$1
+    ;;
+    --pause)
+        # defining as null name to go to pause flow
+        name=''
+        pausing=true
     ;;
     -*) 
       echo "bad option '$1'"
@@ -207,11 +228,16 @@ fi
 
 if [[ -n "$finish" || $new == true ]]; then
     debug "finish: '$finish', new: $new"
-    execution=$(play $task_id)
-    if [[ -n "$execution" ]]; then
-        info "playing '$name' locally!"
+
+    if [[ $pausing == false ]]; then
+        execution=$(play $task_id)
+        if [[ -n "$execution" ]]; then
+            info "playing '$name' locally!"
+        else
+            err "couldn't play '$name' ..."
+        fi
     else
-        err "couldn't play '$name' ..."
+        info "already paused locally"
     fi
 else
     debug "...none finished"

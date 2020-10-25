@@ -33,9 +33,9 @@ fi
 info "resuming task #$id ..."
 json=$($MYDIR/runrun.sh POST "tasks/$id/play")
 if [[ "$json" == *'already in progress'* ]]; then
-    debug "'$(db CURR_TASK_NAME)' was already in progress!"
+    info "< '$(db CURR_TASK_NAME)' was already in progress >"
     echo "$(db CURR_TASK_ID)=$(db CURR_TASK_NAME)"
-    exit 0
+    exit 1
 fi
 
 if [[ -n "$json" ]]; then
@@ -76,5 +76,5 @@ if [[ -n "$json" ]]; then
     db CURR_TASK_ASS "${t_ass}"
 
     echo "$t_name - https://runrun.it/en-US/tasks/${t_id}"
-    $MYDIR/local-play.sh "$t_name"
+    $MYDIR/local-play.sh "$t_name" --ex $t_id
 fi

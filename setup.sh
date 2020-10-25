@@ -77,7 +77,7 @@ function prompt_project_task() {
     info "initializing project environment..."
     if [[ -n "$(db CURR_TASK_ID)" ]]; then
         debug "resuming '$(db CURR_TASK_NAME)' ..."
-        $MYDIR/rr-play.sh
+        $MYDIR/rr-play.sh || true
     else
         info "defining current project..."
         project="$($MYDIR/rr-sync-project.sh)"
@@ -127,7 +127,7 @@ function prompt_project_task() {
                 fi
 
                 info "starting work on $task ..."
-                $MYDIR/rr-play.sh "$(echo $task | cut -d'=' -f1)"
+                $MYDIR/rr-play.sh "$(echo $task | cut -d'=' -f1)" || true
             done
         fi
     fi
