@@ -1,5 +1,5 @@
 # Git Flow CLI Tools
-Another Git Flow solution, this time integrating with the RunRun API.
+Another Git Flow solution, this time integrating with the RunRun API and with timesheet functionality.
 
 ## Inspired by
 * https://nvie.com/posts/a-successful-git-branching-model/
