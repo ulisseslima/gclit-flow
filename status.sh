@@ -14,15 +14,6 @@ source $MYDIR/db.sh
 
 echo "MYDIR=$MYDIR"
 
-monitor_sh=monitor-lock
-monitor=$(ps aux | grep $monitor_sh | grep -v grep | tr -s ' ' | cut -d' ' -f2)
-if [[ -n "$monitor" ]]; then
-    info "$monitor_sh is online:"
-    echo "$monitor"
-else
-    info "$monitor_sh is offline"    
-fi
-
 info "runrun user id: $(rr_user_id)"
 db_dump
 
@@ -43,12 +34,12 @@ fi
 info -n "latest local executions:"
 $MYDIR/psql.sh "
     select 
-        t.name,coalesce(sum(e.elapsed)::text, 'running...') 
+        t.name, coalesce(sum(e.elapsed)::text, 'ongoing...') elapsed
     from executions e 
     join tasks t on t.id=e.task_id 
     where e.start > now()::date 
     group by t.id 
     order by max(e.id) desc
-"
+" --full
 
 $MYDIR/elapsed.sh

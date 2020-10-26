@@ -53,6 +53,14 @@ RR_API='https://runrun.it/api/v1.0'
 DB_NAME=timesheet
 DB_USER=postgres
 
+monitor_sh=monitor-lock
+monitor=$(ps aux | grep $monitor_sh | grep -v grep | tr -s ' ' | cut -d' ' -f2)
+if [[ ! -n "$monitor" ]]; then
+    echo "$monitor_sh is offline. relaunching..."
+    nohup $MYDIR/$monitor_sh.sh &
+    echo "relaunched: $!"
+fi
+
 function rr_header_app_key() {
     echo "App-Key: $RR_APP_KEY"
 }
