@@ -57,7 +57,7 @@ monitor_sh=monitor-lock
 monitor=$(ps aux | grep $monitor_sh | grep -v grep | tr -s ' ' | cut -d' ' -f2)
 if [[ ! -n "$monitor" ]]; then
     echo "$monitor_sh is offline. relaunching..."
-    nohup $MYDIR/$monitor_sh.sh &
+    nohup $MYDIR/$monitor_sh.sh &>$LOGF&
     echo "relaunched: $!"
 fi
 
