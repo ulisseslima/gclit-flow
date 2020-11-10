@@ -23,11 +23,21 @@ if [[ $(nan "$id") == true ]]; then
     err "arg 1 must be the task id"
     if [[ -n "$id" ]]; then
         info "showing results for '$id' on project #$(db CURR_PROJECT_ID) ..."
-        $MYDIR/rr-find-task.sh "$@"
+        matches=$($MYDIR/rr-find-task.sh "$@")
+        
+        $MYDIR/iterate.sh "$matches" '[$n] $line'
+        info "choose one [1]:"
+        read one
+        [[ ! -n "$one" ]] && one=1
+
+        task=$($MYDIR/get.sh $one "$matches")
+        id=$(echo "$task" | cut -d'=' -f1)
     fi
     
-    info "choose an ID and try again"
-    exit 1
+    if [[ $(nan "$id") == true ]]; then
+        info "choose an ID and try again"
+        exit 1
+    fi
 fi
 
 info "resuming task #$id ..."
