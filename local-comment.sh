@@ -24,11 +24,11 @@ $MYDIR/psql.sh "
 
 $MYDIR/psql.sh "
     select 
-        stamp, content 
+        stamp, max(t.name) task, content 
     from executions e 
     join tasks t on t.id=e.task_id 
     join comments c on c.task_id=t.id 
     group by c.id 
     order by c.id desc 
     limit 5
-"
+" --full

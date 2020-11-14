@@ -14,6 +14,18 @@ name="$(db CURR_TASK_NAME)"
 
 debug "adding comment..."
 
+comment="$1"
+if [[ ! -n "$comment" ]]; then
+    err "first arg must be comment message"
+    exit 1
+fi
+debug "$comment"
+
+if [[ "$comment" == --local  ]]; then
+    $MYDIR/local-comment.sh "$2"
+    exit 0
+fi
+
 if [[ $(nan "$id") == true ]]; then
     debug "trying to refresh current task..."
     $MYDIR/rr-sync-task.sh
@@ -23,14 +35,6 @@ if [[ $(nan "$id") == true ]]; then
     err "no tasks are running, can't comment"
     exit 1
 fi
-
-comment="$1"
-if [[ ! -n "$comment" ]]; then
-    err "first arg must be comment message"
-    exit 1
-fi
-
-debug "$comment"
 
 json=$($MYDIR/runrun.sh POST comments "{
   \"task_id\": $id,
