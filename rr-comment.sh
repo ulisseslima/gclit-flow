@@ -22,7 +22,8 @@ fi
 debug "$comment"
 
 if [[ "$comment" == --local  ]]; then
-    $MYDIR/local-comment.sh "$2"
+    shift
+    $MYDIR/local-comment.sh "$@"
     exit 0
 fi
 
