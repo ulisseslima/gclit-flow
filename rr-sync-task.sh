@@ -17,6 +17,7 @@ fi
 
 first="[0]"
 
+task_id=$(echo "$json" | $MYDIR/jprop.sh "$first['id']")
 if [[ '[]' == "$json" ]]; then
     first=''
 
@@ -29,32 +30,14 @@ if [[ '[]' == "$json" ]]; then
     fi
 
     info "found ongoing task $task_id"
-
     json=$($MYDIR/runrun.sh GET "tasks/$task_id")
 fi
 
-info "syncing..."
-p_name=$(echo "$json" | $MYDIR/jprop.sh "$first['project_name']")
-p_id=$(echo "$json" | $MYDIR/jprop.sh "$first['project_id']")
-
-t_name=$(echo "$json" | $MYDIR/jprop.sh "$first['title']")
-t_id=$(echo "$json" | $MYDIR/jprop.sh "$first['id']")
-t_type=$(echo "$json" | $MYDIR/jprop.sh "$first['type_id']")
-
-db CURR_PROJECT_ID "${p_id}"
-db CURR_PROJECT_NAME "${p_name}"
-
-db CURR_TASK_ID "${t_id}"
-db CURR_TASK_NAME "${t_name}"
-db CURR_TASK_TYPE "${t_type}"
-
-t_team=$(echo "$json" | $MYDIR/jprop.sh "$first['team_id']")
-if [[ ! -n "$t_team" || "$t_team" == null || "$t_team" == None ]]; then
-    t_team=$(echo "$json" | $MYDIR/jprop.sh "$first['assignments'][0]['team_id']")
+if [[ ! -n "$task_id" ]]; then
+    err "could not determine current remote task id"
+    exit 1
 fi
-db CURR_TASK_TEAM "${t_team}"
 
-t_ass=$(echo "$json" | $MYDIR/jprop.sh "$first['assignments'][0]['id']")
-db CURR_TASK_ASS "${t_ass}"
-
-echo "${t_id}=${t_name}"
+info "syncing to task #$task_id ..."
+$MYDIR/rr-pause.sh $task_id
+$MYDIR/rr-play.sh $task_id
