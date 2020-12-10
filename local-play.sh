@@ -9,7 +9,6 @@ source $MYDIR/env
 source $MYDIR/log.sh
 source $MYDIR/db.sh
 
-##
 # @return task if created
 function new_task() {
     name="$1"
@@ -32,7 +31,11 @@ function open_tasks() {
         "closed is false order by start"
 }
 
-##
+function latest_tasks() {
+    $MYDIR/psql.sh "select t.name, t.external_id, t.id, sum(coalesce(e.elapsed, interval '0 minutes'))
+        from tasks t join executions e on e.task_id=t.id group by t.id order by max(e.id) desc limit 5" --full
+}
+
 # finishes unclosed executions
 function check_open_executions() {
     chktid=$1
@@ -60,7 +63,6 @@ function check_open_executions() {
     fi
 }
 
-##
 # @return execution if created
 function play() {
     pltask_id="$1"
@@ -85,7 +87,6 @@ function play() {
     ;"
 }
 
-##
 # @return updated task
 function pause() {
     ptask_id="$1"
@@ -112,7 +113,6 @@ function pause() {
     debug "#$ptask_id - finished pause process"
 }
 
-##
 # @return last comments 
 function comment() {
     ctask_id="$1"
@@ -126,7 +126,6 @@ function comment() {
     ;"
 }
 
-##
 # @return tasks that match name 
 function find() {
     task_id="$1"
@@ -152,7 +151,7 @@ while test $# -gt 0
 do
     case "$1" in
     --list|-l) 
-        open_tasks
+        latest_tasks
         exit 0
     ;;
     --status|-s) 
