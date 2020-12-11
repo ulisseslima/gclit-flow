@@ -19,6 +19,8 @@ if [[ ! -n "$comment" ]]; then
     err "first arg must be comment message"
     exit 1
 fi
+
+comment=$(echo $comment)
 debug "$comment"
 
 if [[ "$comment" == --local  ]]; then
