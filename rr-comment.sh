@@ -25,6 +25,7 @@ debug "$comment"
 
 if [[ "$comment" == --local  ]]; then
     shift
+    debug "inserting as local comment instad: $@"
     $MYDIR/local-comment.sh "$@"
     exit 0
 fi
