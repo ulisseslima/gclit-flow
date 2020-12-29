@@ -266,7 +266,7 @@ fi
 info -n "latest executions from '$name' (#$task_id):"
 $MYDIR/psql.sh "select * from executions where task_id = $task_id order by id desc limit 5" --full
 
-$MYDIR/elapsed.sh
+$MYDIR/elapsed.sh "$task_id"
 
 # TODO 
 # - query last executions
