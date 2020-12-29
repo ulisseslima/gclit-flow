@@ -15,29 +15,21 @@ task_id="$1"
 info "total time worked (overall)"
 
 info "today: "
-$MYDIR/psql.sh "select coalesce(sum(elapsed), '0 hours') from executions where start > now()::date"
-
-info "last week: "
-$MYDIR/psql.sh "select coalesce(sum(elapsed), '0 hours') from executions where start > now()::date - interval '1 week'"
-
-info "last month: "
-$MYDIR/psql.sh "select coalesce(sum(elapsed), '0 hours') from executions where start > now()::date - interval '1 month'"
-
-info "last year: "
-$MYDIR/psql.sh "select coalesce(sum(elapsed), '0 hours') from executions where start > now()::date - interval '1 year'"
+$MYDIR/psql.sh "select
+    (select coalesce(sum(elapsed), '0 hours') from executions where start > now()::date) as today,
+    (select coalesce(sum(elapsed), '0 hours') from executions where start > now()::date - interval '1 week') as last_week,
+    (select coalesce(sum(elapsed), '0 hours') from executions where start > now()::date - interval '1 month') as last_month,
+    (select coalesce(sum(elapsed), '0 hours') from executions where start > now()::date - interval '1 year') as last_year
+" --full
 
 if [[ -n "$task_id" ]]; then
     info "total time worked (for task #${task_id})"
 
     info "today: "
-    $MYDIR/psql.sh "select coalesce(sum(elapsed), '0 hours') from executions where task_id = $task_id and start > now()::date"
-
-    info "last week: "
-    $MYDIR/psql.sh "select coalesce(sum(elapsed), '0 hours') from executions where task_id = $task_id and start > now()::date - interval '1 week'"
-
-    info "last month: "
-    $MYDIR/psql.sh "select coalesce(sum(elapsed), '0 hours') from executions where task_id = $task_id and start > now()::date - interval '1 month'"
-
-    info "last year: "
-    $MYDIR/psql.sh "select coalesce(sum(elapsed), '0 hours') from executions where task_id = $task_id and start > now()::date - interval '1 year'"
+    $MYDIR/psql.sh "select
+        (select coalesce(sum(elapsed), '0 hours') from executions where task_id = $task_id and start > now()::date) as today,
+        (select coalesce(sum(elapsed), '0 hours') from executions where task_id = $task_id and start > now()::date - interval '1 week') as last_week,
+        (select coalesce(sum(elapsed), '0 hours') from executions where task_id = $task_id and start > now()::date - interval '1 month') as last_month,
+        (select coalesce(sum(elapsed), '0 hours') from executions where task_id = $task_id and start > now()::date - interval '1 year') as last_year
+    " --full
 fi
