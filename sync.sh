@@ -8,7 +8,9 @@ source $MYDIR/env
 [[ -f $LOCAL_ENV ]] && source $LOCAL_ENV 
 source $MYDIR/log.sh
 source $MYDIR/db.sh
+source $(real require.sh)
 
+require TARGET_BRANCH
 target=$TARGET_BRANCH
 info "syncing with $target ..."
 

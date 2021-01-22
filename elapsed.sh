@@ -14,7 +14,6 @@ task_id="$1"
 
 info "total time worked (overall)"
 
-info "today: "
 $MYDIR/psql.sh "select
     (select coalesce(sum(elapsed), '0 hours') from executions where start > now()::date) as today,
     (select coalesce(sum(elapsed), '0 hours') from executions where start > now()::date - interval '1 week') as last_week,
@@ -25,7 +24,6 @@ $MYDIR/psql.sh "select
 if [[ -n "$task_id" ]]; then
     info "total time worked (for task #${task_id})"
 
-    info "today: "
     $MYDIR/psql.sh "select
         (select coalesce(sum(elapsed), '0 hours') from executions where task_id = $task_id and start > now()::date) as today,
         (select coalesce(sum(elapsed), '0 hours') from executions where task_id = $task_id and start > now()::date - interval '1 week') as last_week,
