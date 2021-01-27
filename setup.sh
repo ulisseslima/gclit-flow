@@ -215,10 +215,17 @@ function local_db() {
 }
 
 ##
+# check pre requisites
+function check_requirements() {
+    check_installed python --version
+}
+
+##
 # build initial config.
 function wizard() {
 	debug "checking configuration..."
-    
+
+    check_requirements
     install
 
     prompt USR_EMAIL "runrun email"

@@ -58,7 +58,7 @@ monitor=$(ps aux | grep $monitor_sh | grep -v grep | tr -s ' ' | cut -d' ' -f2)
 if [[ ! -n "$monitor" ]]; then
     >&2 echo "$monitor_sh is offline. relaunching..."
     nohup $MYDIR/$monitor_sh.sh &>$LOGF&
-    >&2 echo "relaunched: $!"
+    >&2 echo "relaunched: $!; log file: $LOGF"
 fi
 
 function rr_header_app_key() {
@@ -142,4 +142,10 @@ function curr_branch() {
 
 function project_url() {
     grep url .git/config | cut -d'=' -f2 | tr -d ' '
+}
+
+function check_installed() {
+	echo ""
+	echo "checking if $1 is installed..."
+	$@
 }
