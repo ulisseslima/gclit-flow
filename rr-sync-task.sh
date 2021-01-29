@@ -39,5 +39,5 @@ if [[ ! -n "$task_id" ]]; then
 fi
 
 info "syncing to task #$task_id ..."
-$MYDIR/rr-pause.sh $task_id
-$MYDIR/rr-play.sh $task_id
+$MYDIR/rr-pause.sh $task_id > /dev/null 2>&1 && $MYDIR/rr-play.sh $task_id > /dev/null 2>&1
+echo $task_id

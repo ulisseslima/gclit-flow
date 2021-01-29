@@ -20,20 +20,14 @@ db_dump
 info -n "local db:"
 $MYDIR/psql.sh --connection
 
-curr=$($MYDIR/rr-sync-task.sh || true)
-if [[ -n "$curr" ]]; then
-    t_id=$(echo $curr | cut -d'=' -f1)
-    t_name=$(echo $curr | cut -d'=' -f2)
-    
-    info -n "task is currently in progress. you can check response by running $MYDIR/last-response.sh"
-    echo "$t_name - https://runrun.it/en-US/tasks/${t_id}"
-else
-    info -n "task is currently stopped."
+t_id=$($MYDIR/rr-sync-task.sh || true)
+if [[ -n "$t_id" ]]; then
+    info "link: https://runrun.it/en-US/tasks/${t_id}"
 fi
 
+
 info -n "latest local executions:"
-$MYDIR/psql.sh "
-    select 
+$MYDIR/psql.sh "select 
         t.name, coalesce(sum(e.elapsed)::text, 'ongoing...') elapsed
     from executions e 
     join tasks t on t.id=e.task_id 
