@@ -65,7 +65,7 @@ if [[ ! -n "$name" ]]; then
 fi
 
 while [[ ! -n "$label" ]]; do
-    info "choose a label:"
+    info "choose merge request label:"
     read label
 done
 
@@ -73,8 +73,9 @@ info "#$label - creating request to merge back to $target ..."
 git checkout $name
 
 while [[ ! -n "$message" ]]; do
-    info "${name}'s MR message:"
-    read message
+    info "${name}'s MR message (new line then ctrl+d to finish):"
+    readarray -t msg
+    message=$(printf '%s\n' "${msg[@]}")
 done
 debug "MR message: '$message'"
 

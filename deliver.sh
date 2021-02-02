@@ -38,8 +38,9 @@ fi
 git checkout $name
 
 while [[ ! -n "$message" ]]; do
-    info "${name}'s conclusion message:"
-    read message
+    info "${name}'s conclusion message (new line then ctrl+d to finish):"
+    readarray -t msg
+    message=$(printf '%s\n' "${msg[@]}")
 done
 debug "delivery message: '$message'"
 
