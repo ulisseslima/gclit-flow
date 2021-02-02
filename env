@@ -96,7 +96,7 @@ function safe_name() {
     # to lower case:
     name=$(echo ${name,,})
     # replace spaces for "-", then remove anything that's non alphanumeric
-    echo ${name// /-} | sed 's/[^a-z-]//g'
+    echo ${name// /-} | sed 's/[^a-z0-9-]//g'
 }
 
 ##
