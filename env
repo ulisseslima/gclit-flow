@@ -42,6 +42,7 @@ FEATURE_PREFIX='feature'
 HOTFIX_PREFIX='hotfix'
 REMOTE_FEATURES=true
 FEATURE_DELETE_WHEN_DELIVERED=true
+DEFAULT_MR_LABEL=gclit
 
 #RR_CACHE_TTL=5000
 # rr global query params: limit=100, page=1, sort=jprop, sort_dir=desc, filter_id=all

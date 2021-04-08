@@ -60,13 +60,14 @@ if [[ $mr == false || $(project_url) == *github* ]]; then
     git add .
     git commit -a -m "$message" || true
     git push
+fi
 
-    if [[ $FEATURE_DELETE_WHEN_DELIVERED == true ]]; then
-        info "deleting '$name' branch..."
-        git branch -d "$name"
-    else
-        info "delete local branch with: git branch -d $name"
-    fi
+if [[ $FEATURE_DELETE_WHEN_DELIVERED == true ]]; then
+    info "deleting '$name' branch..."
+    git checkout $target
+    git branch -d "$name"
+else
+    info "delete local branch with: git checkout $target; git branch -d $name"
 fi
 
 info "ending '$name' task..."
