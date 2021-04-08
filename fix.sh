@@ -1,6 +1,6 @@
 #!/bin/bash -e
 # @installable
-# TODO criar no padrão fix/issueId-issueName, receber apenas issue id
+# creates a "fix" type feature for working on issues
 MYSELF="$(readlink -f "$0")"
 MYDIR="${MYSELF%/*}"
 ME=$(basename $MYSELF)

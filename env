@@ -142,8 +142,12 @@ function curr_branch() {
 
 # e.g: gitlab.com/group/repo-name
 function project_url() {
-    repo_root=$(git rev-parse --show-toplevel)
+    repo_root=$(repo_root)
     grep url "$repo_root/.git/config" | cut -d'=' -f2 | tr -d ' '
+}
+
+function repo_root() {
+    git rev-parse --show-toplevel
 }
 
 function check_installed() {

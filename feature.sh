@@ -13,7 +13,7 @@ if [[ ! -n "$(curr_branch)" ]]; then
     err "you have to be inside the repository directory"
     branchd="$(db CURR_FEATURE_DIR)"
     if [[ -d "$branchd" ]]; then
-        info "maybe you want to go to $branchd?"
+        info "maybe you want to go to $branchd ?"
     fi
 
     exit 1
@@ -101,7 +101,7 @@ if [[ "$(curr_branch)" != "$name" ]]; then
     info "creating git branch..."
     git checkout -b "$name"
     db CURR_FEATURE "$name"
-    db CURR_FEATURE_DIR "$PWD"
+    db CURR_FEATURE_DIR "$(repo_root)"
 else
     info "branch already created..."
 fi
