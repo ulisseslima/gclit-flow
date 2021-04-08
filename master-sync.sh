@@ -1,5 +1,6 @@
 #!/bin/bash -e
 # @installable
+# sync current branch with master
 MYSELF="$(readlink -f "$0")"
 MYDIR="${MYSELF%/*}"
 ME=$(basename $MYSELF)

@@ -37,11 +37,10 @@ fi
 
 git checkout $name
 
-while [[ ! -n "$message" ]]; do
-    info "${name}'s conclusion message (new line then ctrl+d to finish):"
-    readarray -t msg
-    message=$(printf '%s\n' "${msg[@]}")
-done
+if [[ -z "$message" ]]; then
+    err "arg 1 must be ${name}'s conclusion message"
+    exit 1
+fi
 debug "delivery message: '$message'"
 
 echo "$(date)" > v

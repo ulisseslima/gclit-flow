@@ -9,6 +9,7 @@ source $MYDIR/log.sh
 source $MYDIR/prop.sh
 source $MYDIR/db.sh
 
+# FIXME setup script fails if there are no ongoing tasks
 json=$($MYDIR/runrun.sh GET "tasks?user_id=$(rr_user_id)&is_working_on=true")
 if [[ -n "$json" && "$json" != '[]' ]]; then
     # TODO abstrair pra não ter que duplicar e chamar no pause

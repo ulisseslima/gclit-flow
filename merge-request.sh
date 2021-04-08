@@ -64,9 +64,13 @@ if [[ ! -n "$name" ]]; then
     exit 1
 fi
 
-while [[ ! -n "$label" ]]; do
-    info "choose merge request label:"
-    read label
+while [[ -z "$label" ]]; do
+    if [[ -n "$DEFAULT_MR_LABEL" ]]; then
+        label="$DEFAULT_MR_LABEL"
+    else
+        info "choose merge request label:"
+        read label
+    fi
 done
 
 info "#$label - creating request to merge back to $target ..."
@@ -85,6 +89,7 @@ if [[ $wip == true ]]; then
 fi
 
 # https://docs.gitlab.com/ee/user/project/push_options.html
+# TODO redirecionar todo output e grep 'remote: View merge request for' e já abrir o link localmente
 git push \
     -o merge_request.create \
     -o merge_request.target=$target \

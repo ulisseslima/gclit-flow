@@ -140,8 +140,10 @@ function curr_branch() {
     git branch | grep '*' | cut -d' ' -f2
 }
 
+# e.g: gitlab.com/group/repo-name
 function project_url() {
-    grep url .git/config | cut -d'=' -f2 | tr -d ' '
+    repo_root=$(git rev-parse --show-toplevel)
+    grep url "$repo_root/.git/config" | cut -d'=' -f2 | tr -d ' '
 }
 
 function check_installed() {

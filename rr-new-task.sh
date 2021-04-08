@@ -47,6 +47,10 @@ do
         shift
         project_id="$1"
     ;;
+    --description)
+        shift
+        description="$1"
+    ;;
     -*)
         echo "bad option '$1'"
         exit 1
@@ -117,4 +121,12 @@ else
     t_id=$(echo "$json" | $MYDIR/jprop.sh "['id']")
     info "'$name' created with ID '$t_id'. playing..."
     $MYDIR/rr-play.sh $t_id
+    
+    if [[ -n "$description" ]]; then
+      $MYDIR/runrun.sh PUT "tasks/$t_id/description" "{
+        \"task_description\": {
+          \"description\": \"${description}\"
+        }
+      }"
+    fi
 fi

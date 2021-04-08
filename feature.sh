@@ -19,6 +19,11 @@ if [[ ! -n "$(curr_branch)" ]]; then
     exit 1
 fi
 
+if [[ -z "$(project_url)" ]]; then
+    err "coudn't determine project url, check if you are inside a git project"
+    exit 1
+fi
+
 if [[ "$1" != '-'* ]]; then
     # name was passed directlty as first arg with no prefix
     name="$1"; shift
@@ -50,6 +55,10 @@ do
         
         project_id=$(echo "$task" | $MYDIR/jprop.sh "['project_id']")
     ;;
+    --estimate)
+        shift
+        estimate="$1"
+    ;;
     -*)
         echo "bad option '$1'"
         exit 1
@@ -60,7 +69,7 @@ done
 
 name="$FEATURE_PREFIX/$(safe_name "$name")"
 
-if [[ ! -n "$project_id" ]]; then
+if [[ -z "$project_id" ]]; then
     info "no project selected. choose one:"
     read name_or_id
 
@@ -68,15 +77,25 @@ if [[ ! -n "$project_id" ]]; then
 fi
 
 project_name="$($MYDIR/rr-find-project.sh $project_id)"
-if [[ ! -n "$project_name" ]]; then
+if [[ -z "$project_name" ]]; then
     err "problem finding project"
     exit 1
 fi
+
+# TODO
+#if [[ -z "$estimate" ]]; then
+#    info "no time estimate found, enter one [8h]"
+#    read estimate
+#fi
 
 info "will start '$name' on project '$project_name'"
 info "project URL: $(project_url)"
 echo "<enter> to proceed, CTRL+C to abort"
 read anyKey
+
+info "switching to $TARGET_BRANCH and syncing..."
+git checkout $TARGET_BRANCH
+git pull
 
 if [[ "$(curr_branch)" != "$name" ]]; then
     info "creating git branch..."
@@ -92,7 +111,7 @@ if [[ $REMOTE_FEATURES == true ]]; then
     git push -u origin $name
 fi
 
-$MYDIR/rr-new-task.sh "$name" -p $project_id
+$MYDIR/rr-new-task.sh "$name" -p $project_id --description "$(project_url)/-/tree/$name"
 
 info "additional project info on runrun..."
 $MYDIR/rr-comment.sh "started a new feature on $(project_url)"
