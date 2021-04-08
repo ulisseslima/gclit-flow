@@ -14,7 +14,7 @@ if [[ ! -n "$name"　|| "$name" == '-'* ]]; then
     err "arg 1 must be task name"
     exit 1
 fi
-info "creating runrun task '$name'..."
+info "creating runrun task '$name' ..."
 
 project_id="$(db CURR_PROJECT_ID)"
 type=$(db CURR_TASK_TYPE)
@@ -60,14 +60,14 @@ do
 done
 
 while [[ $(nan "$project_id") == true ]]; do
-    if [[ ! -n "$project_id" ]]; then
+    if [[ -z "$project_id" ]]; then
       info "to start a new task you need to be working on a project. enter desired project name:"
       read project_id
     fi
 
     project_id=$(prompt_project_id "$project_id")
 done
-debug "project_id: $project_id"
+info "project_id: $project_id"
 
 debug "type: $type"
 if [[ $(nan "$type") == true ]]; then
