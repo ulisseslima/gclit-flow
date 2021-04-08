@@ -38,8 +38,17 @@ fi
 git checkout $name
 
 if [[ -z "$message" ]]; then
-    err "arg 1 must be ${name}'s conclusion message"
-    exit 1
+    if [[ "$name" == *fix* ]]; then
+        issue_id=$(echo $name | cut -d'-' -f2)
+        if [[ $(nan $issue_id) == true ]]; then
+            err "couldn't determine issue id from branch name: $name"
+            exit 1
+        fi
+        message="closes #$issue_id"
+    else
+        err "arg 1 must be ${name}'s conclusion message"
+        exit 1
+    fi
 fi
 debug "delivery message: '$message'"
 
@@ -63,6 +72,9 @@ if [[ $mr == false || $(project_url) == *github* ]]; then
 fi
 
 if [[ $FEATURE_DELETE_WHEN_DELIVERED == true ]]; then
+    info "backing up '$name' ..."
+    cp -r $(repo_root) /tmp
+
     info "deleting '$name' branch..."
     git checkout $target
     git branch -d "$name"
