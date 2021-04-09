@@ -88,14 +88,27 @@ fi
 #    read estimate
 #fi
 
+info "switching to $TARGET_BRANCH and syncing..."
+git checkout $TARGET_BRANCH
+git pull
+
+if [[ $(git branch | grep -c $name) -eq 1 ]]; then
+    info "feature already exists. switching to it..."
+    db CURR_FEATURE "$name"
+    db CURR_FEATURE_DIR "$(repo_root)"
+
+    git checkout $name
+    git merge $TARGET_BRANCH
+    git branch
+
+    $MYDIR/rr-play.sh "$name"
+    exit 0
+fi
+
 info "will start '$name' on project '$project_name'"
 info "project URL: $(project_url)"
 echo "<enter> to proceed, CTRL+C to abort"
 read anyKey
-
-info "switching to $TARGET_BRANCH and syncing..."
-git checkout $TARGET_BRANCH
-git pull
 
 if [[ "$(curr_branch)" != "$name" ]]; then
     info "creating git branch..."

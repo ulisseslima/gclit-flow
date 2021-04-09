@@ -9,8 +9,23 @@ source $MYDIR/env
 source $MYDIR/log.sh
 source $MYDIR/db.sh
 
-message="$1"
-mr=${2:-true}
+message=''
+mr=true
+
+while test $# -gt 0
+do
+    case "$1" in
+    --message|-m)
+        shift
+        message="$1"
+    ;;
+    -*)
+        echo "bad option '$1'"
+        exit 1
+    ;;
+    esac
+    shift
+done
 
 if [[ ! -n "$(curr_branch)" ]]; then
     err "you have to be inside the repository directory"
@@ -42,24 +57,34 @@ if [[ -z "$message" ]]; then
         issue_id=$(echo $name | cut -d'-' -f2)
         if [[ $(nan $issue_id) == true ]]; then
             err "couldn't determine issue id from branch name: $name"
-            exit 1
+            #exit 1
         fi
         message="closes #$issue_id"
-    else
-        err "arg 1 must be ${name}'s conclusion message"
-        exit 1
     fi
 fi
-debug "delivery message: '$message'"
 
-echo "$(date)" > v
+info "delivery message: '$message'"
 
-$MYDIR/commit.sh "$message"
+info "will deliver feature '$name', confirm?"
+pom=$(find $(repo_root) -name pom.xml -print -quit)
+if [[ -f "$pom" ]]; then
+    latest=$($MYDIR/pom.sh --version $pom)
+    info "## closes [since $latest]:"
+    git log $latest...$name | grep -i closes | sort -fu
+fi
+read confirmation
+
+# FIXME in case there is nothing to push
+#echo "$(date)" > v
+#git add v
+#git commit -m 'gclit merge request f'
+
+#$MYDIR/commit.sh "$message"
 if [[ $mr == true && $(project_url) == *gitlab* ]]; then
-    $MYDIR/merge-request.sh "$@"
+    $MYDIR/merge-request.sh --message "$message"
 fi
 $MYDIR/sync.sh
-$MYDIR/push.sh "$message"
+#$MYDIR/push.sh "$message"
 
 if [[ $mr == false || $(project_url) == *github* ]]; then
     info "merging directly to $target ..."
@@ -73,7 +98,9 @@ fi
 
 if [[ $FEATURE_DELETE_WHEN_DELIVERED == true ]]; then
     info "backing up '$name' ..."
-    cp -r $(repo_root) /tmp
+    tmp=/tmp/git/$(repo_root)
+    mkdir -p $tmp
+    cp -r $(repo_root)/* $tmp
 
     info "deleting '$name' branch..."
     git checkout $target

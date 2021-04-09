@@ -16,7 +16,7 @@ info "merge request..."
 debug "options: $@"
 
 if [[ $# -gt 0 && "$1" != '-'* ]]; then
-    # message was passed directlty as first arg with no prefix
+    # message was passed directly as first arg with no prefix
     message="$1"
     shift
 fi
@@ -81,6 +81,7 @@ while [[ ! -n "$message" ]]; do
     readarray -t msg
     message=$(printf '%s\n' "${msg[@]}")
 done
+
 debug "MR message: '$message'"
 
 if [[ $wip == true ]]; then
@@ -98,4 +99,5 @@ git push \
     -o merge_request.description="$description" \
     -o merge_request.label="$label"
 
-$MYDIR/rr-comment.sh "opened MR to $target"
+debug "mr comment"
+$MYDIR/rr-comment.sh "opened MR to $target" || true

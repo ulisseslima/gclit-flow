@@ -218,6 +218,7 @@ function local_db() {
 # check pre requisites
 function check_requirements() {
     check_installed python --version
+    check_installed xmlstarlet --version
 }
 
 ##
