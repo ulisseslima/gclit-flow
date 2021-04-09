@@ -48,3 +48,17 @@ gclit-pause
 ```
 ./logs.sh
 ```
+
+# Recommended workflow for issues
+For each issue you'll work on:
+```
+gclit-fix ${issue_id}
+# a runrun task will be created.
+# do your work...
+# then only commit. do not push. otherwise merge request won't be auto created.
+# use commit message 'closes #${issue_id}' so an auto changelog can be created.
+# when you're done:
+gclit-deliver
+# that's it!
+# a merge request will be automatically created, the branch deleted, the task ended, and you'll switch to a synced master branch
+```
