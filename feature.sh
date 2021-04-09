@@ -111,7 +111,19 @@ if [[ $REMOTE_FEATURES == true ]]; then
     git push -u origin $name
 fi
 
-$MYDIR/rr-new-task.sh "$name" -p $project_id --description "$(project_url)/-/tree/$name"
+project_url="$(project_url)"
+
+description="$project_url/-/tree/$name"
+if [[ "$name" == *fix* ]]; then
+    issue_id=$(echo $name | cut -d'-' -f2)
+    if [[ $(nan $issue_id) == true ]]; then
+        err "couldn't determine issue id from feature name: $name"
+    fi
+
+    description="* $description * $project_url/-/issues/$issue_id"
+fi
+
+$MYDIR/rr-new-task.sh "$name" -p $project_id --description "$description"
 
 info "additional project info on runrun..."
 $MYDIR/rr-comment.sh "started a new feature on $(project_url)"
