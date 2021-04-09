@@ -53,3 +53,11 @@ if [[ "$branch" == *fix* ]]; then
     fi
 fi
 echo ""
+
+info "task:"
+task=$($MYDIR/rr-find-task.sh "$branch" 2>/dev/null)
+task_id=$(echo "$task" | cut -d'=' -f1)
+task_info=$(echo "$task" | cut -d'=' -f2)
+echo "https://runrun.it/en-US/tasks/$task_id"
+echo "$task_info"
+echo ""
