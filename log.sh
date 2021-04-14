@@ -4,7 +4,7 @@ MYDIR="${MYSELF%/*}"
 ME=$(basename $MYSELF)
 
 logf="$LOGF"
-if [[ ! -n "$logf" ]]; then
+if [[ -z "$logf" ]]; then
     >&2 echo "env var LOGF must be defined"
     exit 1
 fi
