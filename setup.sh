@@ -232,6 +232,9 @@ function wizard() {
     prompt USR_EMAIL "runrun email"
     prompt RR_APP_KEY "runrun API app key"
 	prompt RR_U_TOKEN "runrun API user token"
+    
+    prompt GITLAB_TOKEN "gitlab API personal access token"
+    prompt GITLAB_API "gitlab API base URL"
 
     assert_is_up "$RR_URL"
     debug "$RR_URL is up"

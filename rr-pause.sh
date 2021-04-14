@@ -38,3 +38,5 @@ else
     info "'$name' paused."
     $MYDIR/local-play.sh --pause
 fi
+
+$MYDIR/spend.sh "$id"

@@ -8,6 +8,11 @@ source $MYDIR/env
 [[ -f $LOCAL_ENV ]] && source $LOCAL_ENV 
 source $MYDIR/log.sh
 
+if [[ ! -f "$(repo_root)/.git/config" ]]; then
+    err "you have to be inside a repository directory before running this command"
+    exit 1
+fi
+
 branch="$(curr_branch)"
 project_url=$(project_url)
 

@@ -29,6 +29,7 @@ CHANGELOG=$REPO_DIR/README.md
 
 CONFD=$HOME/.${REPO_NAME}
 LOCAL_ENV=$CONFD/config
+GITLAB_ENV=gitlab.env
 LOCAL_DB=$CONFD/db
 LOGF=$CONFD/${REPO_NAME}.log
 
@@ -51,6 +52,9 @@ RR_U_TOKEN=''
 RR_URL='https://runrun.it'
 RR_API='https://runrun.it/api/v1.0'
 
+GITLAB_TOKEN=''
+GITLAB_API=''
+
 DB_NAME=timesheet
 DB_USER=postgres
 
@@ -68,6 +72,10 @@ function rr_header_app_key() {
 
 function rr_header_usr_token() {
     echo "User-Token: $RR_U_TOKEN"
+}
+
+function gitlab_header_token() {
+    echo "PRIVATE-TOKEN: $GITLAB_TOKEN"
 }
 
 function rr_user_id() {

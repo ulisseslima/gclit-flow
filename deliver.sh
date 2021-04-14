@@ -58,8 +58,9 @@ if [[ -z "$message" ]]; then
         if [[ $(nan $issue_id) == true ]]; then
             err "couldn't determine issue id from branch name: $name"
             #exit 1
+        else
+            message="closes #$issue_id"
         fi
-        message="closes #$issue_id"
     fi
 fi
 

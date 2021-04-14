@@ -30,6 +30,8 @@ fi
 info "delivering #$id: '$name', assignment '$ass' ..."
 json=$($MYDIR/runrun.sh POST "tasks/$id/assignments/$ass/deliver")
 
+$MYDIR/spend.sh "$id"
+
 info "finishing task $id ..."
 json=$($MYDIR/runrun.sh POST "tasks/$id/deliver")
 if [[ "$json" == *'already delivered'* ]]; then
@@ -43,3 +45,4 @@ else
     db LAST_TASK_ID $id
     info "task '$name' delivered."
 fi
+
