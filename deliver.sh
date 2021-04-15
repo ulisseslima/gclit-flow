@@ -104,6 +104,7 @@ if [[ $FEATURE_DELETE_WHEN_DELIVERED == true ]]; then
     info "deleting '$name' branch..."
     git checkout $target
     git branch -d "$name"
+    git pull
 else
     info "delete local branch with: git checkout $target; git branch -d $name"
 fi
