@@ -66,13 +66,10 @@ fi
 
 info "delivery message: '$message'"
 
+# TODO work with github origin/main
 info "will deliver feature '$name', confirm?"
-pom=$(find $(repo_root) -name pom.xml -print -quit)
-if [[ -f "$pom" ]]; then
-    latest=$($MYDIR/pom.sh --version $pom)
-    info "## closes [since $latest]:"
-    git log $latest...$name | grep -i closes | sort -fu
-fi
+info "## closes"
+git log HEAD...origin/master | grep -i closes | sort -fu
 read confirmation
 
 # FIXME in case there is nothing to push
