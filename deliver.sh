@@ -67,9 +67,10 @@ fi
 info "delivery message: '$message'"
 
 # TODO work with github origin/main
-info "will deliver feature '$name', confirm?"
+info "will deliver feature '$name'"
 info "## closes"
 git log HEAD...origin/master | grep -i closes | sort -fu
+info "confirm?"
 read confirmation
 
 # FIXME in case there is nothing to push
