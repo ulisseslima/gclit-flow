@@ -95,6 +95,9 @@ if [[ $mr == false || $(project_url) == *github* ]]; then
     git push
 fi
 
+info "ending '$name' task..."
+$MYDIR/rr-deliver-task.sh
+
 if [[ $FEATURE_DELETE_WHEN_DELIVERED == true ]]; then
     info "backing up '$name' ..."
     tmp=/tmp/git/$(repo_root)
@@ -108,8 +111,5 @@ if [[ $FEATURE_DELETE_WHEN_DELIVERED == true ]]; then
 else
     info "delete local branch with: git checkout $target; git branch -d $name"
 fi
-
-info "ending '$name' task..."
-$MYDIR/rr-deliver-task.sh
 
 info "'$name' delivered. exit status: $?"
