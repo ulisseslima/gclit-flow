@@ -152,7 +152,7 @@ function curr_branch() {
 # e.g: gitlab.com/group/repo-name
 function project_url() {
     repo_root=$(repo_root)
-    grep url "$repo_root/.git/config" | cut -d'=' -f2 | tr -d ' '
+    grep url "$repo_root/.git/config" | cut -d'=' -f2 | tr -d ' ' | tr -d '.git'
 }
 
 function repo_root() {
