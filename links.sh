@@ -7,9 +7,14 @@ ME=$(basename $MYSELF)
 source $MYDIR/env
 [[ -f $LOCAL_ENV ]] && source $LOCAL_ENV 
 source $MYDIR/log.sh
+source $MYDIR/db.sh
 
 if [[ ! -f "$(repo_root)/.git/config" ]]; then
     err "you have to be inside a repository directory before running this command"
+    branchd="$(db CURR_FEATURE_DIR)"
+    if [[ -d "$branchd" ]]; then
+        info "maybe you want to go to $branchd ?"
+    fi
     exit 1
 fi
 
@@ -21,7 +26,7 @@ if [[ ! -n "$branch" ]]; then
 
     branchd="$(db CURR_FEATURE_DIR)"
     if [[ -d "$branchd" ]]; then
-        info "maybe you want to go to $branchd?"
+        info "maybe you want to go to $branchd ?"
     fi
     exit 1
 fi

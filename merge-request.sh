@@ -52,7 +52,7 @@ if [[ ! -n "$(curr_branch)" ]]; then
 
     branchd="$(db CURR_FEATURE_DIR)"
     if [[ -d "$branchd" ]]; then
-        info "maybe you want to go to $branchd?"
+        info "maybe you want to go to $branchd ?"
     fi
     exit 1
 fi
