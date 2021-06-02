@@ -30,5 +30,8 @@ git checkout $target
 git pull
 git checkout $current
 git merge $target
+if [[ $(git status | grep -ci 'Your branch is ahead' || true) -gt 0 ]]; then
+    git push
+fi
 
 $MYDIR/rr-comment.sh "synced to $target"
