@@ -25,13 +25,17 @@ if [[ ! -n "$(curr_branch)" ]]; then
 fi
 
 current=$(db CURR_FEATURE)
+info "... from $current"
 
 git checkout $target
 git pull
 git checkout $current
 git merge $target
 if [[ $(git status | grep -ci 'Your branch is ahead' || true) -gt 0 ]]; then
+    info "detected $current ahead of $target, pushing changes"
     git push
 fi
+
+info "$current is synced with $target"
 
 $MYDIR/rr-comment.sh "synced to $target"
