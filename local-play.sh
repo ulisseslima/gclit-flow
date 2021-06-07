@@ -5,7 +5,7 @@ MYDIR="${MYSELF%/*}"
 ME=$(basename $MYSELF)
 
 source $MYDIR/env
-[[ -f $LOCAL_ENV ]] && source $LOCAL_ENV 
+[[ -f $LOCAL_ENV ]] && source $LOCAL_ENV
 source $MYDIR/log.sh
 source $MYDIR/db.sh
 
@@ -23,6 +23,13 @@ function new_task() {
      WHERE NOT EXISTS (SELECT * FROM existing_task)
      RETURNING *
     ;"
+
+    if [[ -n "$external_id" ]]; then
+        info "updating external id of '$name' to '$external_id'"
+        >&2 $MYDIR/psql.sh "update tasks set external_id = '$external_id' 
+            where name = '$name' and project_id = $project_id
+        "
+    fi
 }
 
 function open_tasks() {

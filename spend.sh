@@ -27,7 +27,12 @@ if [[ -n "$GITLAB_TOKEN" ]]; then
                 err "couldn't determine issue id from branch name: '$task_name', current time spent won't be sent."
             else
                 duration=$($MYDIR/spent.sh $rr_task_id)
-                $MYDIR/gitlab-api.sh POST "projects/$GITLAB_PID/issues/$issue_id/add_spent_time?duration=$duration"
+                if [[ -z "$duration" ]]; then
+                    err "couldn't determine time spent on task id '$rr_task_id' since last execution"
+                else
+                    info "marking '$duration' as spent on '$rr_task_id' ..."
+                    $MYDIR/gitlab-api.sh POST "projects/$GITLAB_PID/issues/$issue_id/add_spent_time?duration=$duration"
+                fi
             fi
         fi
     fi
