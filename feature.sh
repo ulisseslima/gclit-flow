@@ -25,7 +25,7 @@ if [[ -z "$(project_url)" ]]; then
 fi
 
 if [[ "$1" != '-'* ]]; then
-    # name was passed directlty as first arg with no prefix
+    # name was passed directly as first arg with no prefix
     name="$1"; shift
 fi
 
@@ -105,7 +105,7 @@ if [[ $(git branch | grep -c $name) -eq 1 ]]; then
     exit 0
 fi
 
-info "will start '$name' on project '$project_name'"
+info "will start '$name' on project '$project_name', with target branch '$TARGET_BRANCH'"
 info "project URL: $(project_url)"
 echo "<enter> to proceed, CTRL+C to abort"
 read anyKey
@@ -121,6 +121,7 @@ fi
 
 if [[ $REMOTE_FEATURES == true ]]; then
     info "pushing local branch to remote..."
+    git branch --set-upstream-to=origin/$name $name
     git push -u origin $name
 fi
 

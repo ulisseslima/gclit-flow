@@ -1,5 +1,6 @@
 #!/bin/bash -e
 # @installable
+# creates a local branch pointing to an already existing remote branch and switches to it
 MYSELF="$(readlink -f "$0")"
 MYDIR="${MYSELF%/*}"
 ME=$(basename $MYSELF)

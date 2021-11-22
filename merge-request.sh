@@ -89,6 +89,8 @@ if [[ $wip == true ]]; then
     info "WIP prefix added"
 fi
 
+# TODO merge request is not opened if all changes are already pushed
+
 # https://docs.gitlab.com/ee/user/project/push_options.html
 # TODO redirecionar todo output e grep 'remote: View merge request for' e já abrir o link localmente
 git push \

@@ -39,6 +39,11 @@ CACHE=/tmp/$REPO_NAME
 mkdir -p $CACHE
 
 TARGET_BRANCH=master
+curr_branch=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$curr_branch" != *fix* && "$curr_branch" != *feature* ]]; then
+    TARGET_BRANCH=$curr_branch
+fi
+
 FEATURE_PREFIX='feature'
 HOTFIX_PREFIX='hotfix'
 REMOTE_FEATURES=true
