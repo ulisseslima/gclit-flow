@@ -38,7 +38,7 @@ USR_EMAIL=''
 CACHE=/tmp/$REPO_NAME
 mkdir -p $CACHE
 
-TARGET_BRANCH=master
+TARGET_BRANCH=prd
 curr_branch=$(git rev-parse --abbrev-ref HEAD)
 if [[ "$curr_branch" != *fix* && "$curr_branch" != *feature* ]]; then
     TARGET_BRANCH=$curr_branch

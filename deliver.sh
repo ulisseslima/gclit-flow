@@ -67,9 +67,9 @@ fi
 info "delivery message: '$message'"
 
 # TODO work with github origin/main
-info "will deliver feature '$name'"
+info "will deliver feature '$name' into target branch '$target'"
 info "## closes"
-git log HEAD...origin/master | grep -i closes | sort -fu
+git log HEAD...origin/$target | grep -i closes | sort -fu
 info "confirm?"
 read confirmation
 
@@ -80,9 +80,9 @@ read confirmation
 
 #$MYDIR/commit.sh "$message"
 if [[ $mr == true && $(project_url) == *gitlab* ]]; then
-    $MYDIR/merge-request.sh --message "$message"
+    $MYDIR/merge-request.sh --message "$message" --target "$target"
 fi
-$MYDIR/sync.sh
+$MYDIR/sync.sh --target "$target"
 #$MYDIR/push.sh "$message"
 
 if [[ $mr == false || $(project_url) == *github* ]]; then

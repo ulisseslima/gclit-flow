@@ -10,8 +10,23 @@ source $MYDIR/log.sh
 source $MYDIR/db.sh
 source $(real require.sh)
 
-require TARGET_BRANCH
-target=$TARGET_BRANCH
+while test $# -gt 0
+do
+    case "$1" in
+    --target)
+        shift
+        target="$1"
+    ;;
+    -*)
+        echo "bad option '$1'"
+        exit 1
+    ;;
+    esac
+    shift
+done
+
+[[ -z "$target" ]] && target=$TARGET_BRANCH
+require target
 info "syncing with $target ..."
 
 if [[ ! -n "$(curr_branch)" ]]; then

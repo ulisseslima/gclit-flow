@@ -39,6 +39,10 @@ do
         shift
         description="$1"
     ;;
+    --target)
+        shift
+        target="$1"
+    ;;
     -*)
         echo "bad option '$1'"
         exit 1
@@ -57,8 +61,10 @@ if [[ ! -n "$(curr_branch)" ]]; then
     exit 1
 fi
 
+[[ -z "$target" ]] && target=$TARGET_BRANCH
+info "target branch: $target"
+
 name="$(db CURR_FEATURE)"
-target=$TARGET_BRANCH
 if [[ ! -n "$name" ]]; then
     err "you're not working on any features, make sure to start one with gclit-feature"
     exit 1
