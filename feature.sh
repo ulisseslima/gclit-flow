@@ -121,8 +121,8 @@ fi
 
 if [[ $REMOTE_FEATURES == true ]]; then
     info "pushing local branch to remote..."
-    git branch --set-upstream-to=origin/$name $name
     git push -u origin $name
+    git branch --set-upstream-to=origin/$name $name
 fi
 
 project_url="$(project_url)"
