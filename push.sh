@@ -22,7 +22,7 @@ if [[ ! -n "$(curr_branch)" ]]; then
 fi
 
 name="$(db CURR_FEATURE)"
-target=$TARGET_BRANCH
+target=$(curr_branch)
 if [[ ! -n "$name" ]]; then
     err "you're not working on any features, make sure to start one with gclit-feature"
     exit 1

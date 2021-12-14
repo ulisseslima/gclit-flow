@@ -25,7 +25,7 @@ do
     shift
 done
 
-[[ -z "$target" ]] && target=$TARGET_BRANCH
+[[ -z "$target" ]] && target=$(db CURR_FEATURE_TARGET_BRANCH)
 require target
 info "syncing with $target ..."
 

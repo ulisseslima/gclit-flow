@@ -88,6 +88,7 @@ fi
 #    read estimate
 #fi
 
+TARGET_BRANCH=$(curr_branch)
 info "switching to $TARGET_BRANCH and syncing..."
 git checkout $TARGET_BRANCH
 git pull
@@ -115,6 +116,7 @@ if [[ "$(curr_branch)" != "$name" ]]; then
     git checkout -b "$name"
     db CURR_FEATURE "$name"
     db CURR_FEATURE_DIR "$(repo_root)"
+    db CURR_FEATURE_TARGET_BRANCH "$TARGET_BRANCH"
 else
     info "branch already created..."
 fi

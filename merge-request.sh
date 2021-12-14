@@ -61,7 +61,7 @@ if [[ ! -n "$(curr_branch)" ]]; then
     exit 1
 fi
 
-[[ -z "$target" ]] && target=$TARGET_BRANCH
+[[ -z "$target" ]] && target=$(curr_branch)
 info "target branch: $target"
 
 name="$(db CURR_FEATURE)"
