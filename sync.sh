@@ -27,7 +27,7 @@ done
 
 [[ -z "$target" ]] && target=$(db CURR_FEATURE_TARGET_BRANCH)
 require target
-info "syncing with $target ..."
+info "syncing with $target .."
 
 if [[ ! -n "$(curr_branch)" ]]; then
     err "you have to be inside the repository directory"
