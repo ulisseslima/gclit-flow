@@ -9,14 +9,31 @@ source $MYDIR/env
 source $MYDIR/log.sh
 source $MYDIR/db.sh
 
-id="$1"
-if [[ ! -n "$id" ]]; then
+while test $# -gt 0
+do
+    case "$1" in
+    --id)
+        shift
+        id=$1
+    ;;
+    --comment|-c)
+      shift
+      comment="$1"
+    ;;
+    -*) 
+      echo "bad option '$1'"
+    ;;
+    esac
+    shift
+done
+
+if [[ -z "$id" ]]; then
     id="$(db CURR_TASK_ID)"
 fi
 name="$(db CURR_TASK_NAME)"
 
 if [[ $(nan "$id") == true ]]; then
-    err "arg 1 must be the task id"
+    err "--id must be the task id"
 fi
 
 if [[ $(nan "$id") == true ]]; then
@@ -37,6 +54,10 @@ elif [[ "$json" == *'error'* ]]; then
 else
     info "'$name' paused."
     $MYDIR/local-play.sh --pause
+fi
+
+if [[ -n "$comment" ]]; then
+    $MYDIR/rr-comment.sh "$comment"
 fi
 
 $MYDIR/spend.sh "$id"
