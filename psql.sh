@@ -13,6 +13,14 @@ CALLER=$(basename `readlink -f $0`)
 
 separator="|"
 
+# TODO support for different ports and hosts
+connection="psql -U $DB_USER $DB_NAME"
+ops='qAtX'
+
+if [[ $# -lt 1 ]]; then
+    $connection
+fi
+
 query="$1"; shift
 if [[ ! -n "$query" ]]; then
     err "arg 1 must be the query"
@@ -24,10 +32,6 @@ if [[ "$query" == --create-db ]]; then
     psql -U $DB_USER -c "create database $DB_NAME"
     exit 0
 fi
-
-# TODO support for different ports and hosts
-connection="psql -U $DB_USER $DB_NAME"
-ops='qAtX'
 
 if [[ "$query" == --connection ]]; then
     echo "$connection"
