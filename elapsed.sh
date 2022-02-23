@@ -23,7 +23,7 @@ info "total time worked (overall)"
 " --full
 
 if [[ -n "$task_id" ]]; then
-    if [[ $(nan $task_id == true) ]]; then
+    if [[ $(nan $task_id) == true ]]; then
         task_name="$task_id"
         task_id=$($MYDIR/psql.sh "select id from tasks where name ilike '%$task_name%' limit 1")
         if [[ -z "$task_id" ]]; then
