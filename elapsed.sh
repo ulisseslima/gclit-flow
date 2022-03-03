@@ -26,9 +26,12 @@ if [[ -n "$task_id" ]]; then
     if [[ $(nan $task_id) == true ]]; then
         task_name="$task_id"
         task_id=$($MYDIR/psql.sh "select id from tasks where name ilike '%$task_name%' limit 1")
+        task_name=$($MYDIR/psql.sh "select name from tasks where id = $task_id")
         if [[ -z "$task_id" ]]; then
             err "task not found: $task_name"
             exit 1
+        else
+            info "found task: $task_name"
         fi
     fi
 
