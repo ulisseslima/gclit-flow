@@ -11,9 +11,10 @@ source $MYDIR/db.sh
 
 info -n "latest executions:"
 $MYDIR/psql.sh "select 
-t.name, sum(t.elapsed) 
+t.name, sum(t.elapsed)
 from executions e
-join tasks t on t.id=e.task_id 
+join tasks t on t.id=e.task_id
+where e.finish > (now()::date - interval '1 month')
 group by t.id
 order by max(e.id) desc 
 limit 10" --full
