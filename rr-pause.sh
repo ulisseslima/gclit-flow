@@ -9,6 +9,11 @@ source $MYDIR/env
 source $MYDIR/log.sh
 source $MYDIR/db.sh
 
+if [[ "$RR_ENABLED" != true ]]; then
+    err "run run is not enabled"
+    exit 1
+fi
+
 while test $# -gt 0
 do
     case "$1" in
@@ -53,11 +58,9 @@ elif [[ "$json" == *'error'* ]]; then
     echo "$json"
 else
     info "'$name' paused."
-    $MYDIR/local-play.sh --pause
+    $MYDIR/play.sh --pause
 fi
 
 if [[ -n "$comment" ]]; then
     $MYDIR/rr-comment.sh "$comment"
 fi
-
-$MYDIR/spend.sh "$id"

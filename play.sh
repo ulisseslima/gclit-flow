@@ -29,6 +29,14 @@ function new_task() {
         >&2 $MYDIR/psql.sh "update tasks set external_id = '$external_id' 
             where name = '$name' and project_id = $project_id
         "
+    else
+        issue_id=$(echo $name | cut -d'-' -f2)
+        if [[ $(nan $issue_id) != true ]]; then
+            info "updating external id of '$name' to '$issue_id'"
+            >&2 $MYDIR/psql.sh "update tasks set external_id = '$issue_id' 
+                where name = '$name' and project_id = $project_id
+            "
+        fi
     fi
 }
 
@@ -238,7 +246,12 @@ if [[ -n "$finish" || $new == true ]]; then
     if [[ $pausing == false ]]; then
         execution=$(play $task_id)
         if [[ -n "$execution" ]]; then
-            info "playing '$name' locally!"
+            info "playing '$name' locally!!"
+
+            db LAST_TASK_ID "$(db CURR_TASK_ID)"
+
+            db CURR_TASK_ID "${task_id}"
+            db CURR_TASK_NAME "${name}"
         else
             err "couldn't play '$name' ..."
         fi
@@ -258,12 +271,18 @@ else
     execution=$(pause $task_id)
     if [[ -n "$execution" ]]; then
         info "paused '$name' locally!"
+        $MYDIR/spend.sh "$name"
     else
         info "couldn't pause '$name' ..."
         
         execution=$(play $task_id)
         if [[ -n "$execution" ]]; then
             info "playing '$name' locally!"
+
+            db LAST_TASK_ID "$(db CURR_TASK_ID)"
+
+            db CURR_TASK_ID "${task_id}"
+            db CURR_TASK_NAME "${name}"
         else
             err "couldn't play '$name' ..."
         fi

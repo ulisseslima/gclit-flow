@@ -76,10 +76,12 @@ if [[ -z "$project_id" ]]; then
     project_id=$(prompt_project_id "$name_or_id")
 fi
 
-project_name="$($MYDIR/rr-find-project.sh $project_id)"
-if [[ -z "$project_name" ]]; then
-    err "problem finding project"
-    exit 1
+if [[ "$RR_ENABLED" == true ]]; then
+    project_name="$($MYDIR/rr-find-project.sh $project_id)"
+    if [[ -z "$project_name" ]]; then
+        err "problem finding project"
+        exit 1
+    fi
 fi
 
 # TODO
@@ -102,7 +104,7 @@ if [[ $(git branch | grep -c $name) -eq 1 ]]; then
     git merge $TARGET_BRANCH
     git branch
 
-    $MYDIR/rr-play.sh "$name"
+    $MYDIR/play.sh "$name"
     exit 0
 fi
 

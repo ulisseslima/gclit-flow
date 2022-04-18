@@ -9,6 +9,11 @@ source $MYDIR/env
 source $MYDIR/log.sh
 source $MYDIR/db.sh
 
+if [[ "$RR_ENABLED" != true ]]; then
+    debug "run run is not enabled"
+    exit 0
+fi
+
 name="$1"
 if [[ ! -n "$name"　|| "$name" == '-'* ]]; then
     err "arg 1 must be task name"

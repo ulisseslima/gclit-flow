@@ -9,6 +9,11 @@ source $MYDIR/env
 source $MYDIR/log.sh
 source $MYDIR/db.sh
 
+if [[ "$RR_ENABLED" != true ]]; then
+    err "run run is not enabled"
+    exit 1
+fi
+
 id="$1"
 if [[ ! -n "$id" ]]; then
     id="$(db CURR_TASK_ID)"
@@ -86,5 +91,5 @@ if [[ -n "$json" ]]; then
     db CURR_TASK_ASS "${t_ass}"
 
     echo "$t_name - https://runrun.it/en-US/tasks/${t_id}"
-    $MYDIR/local-play.sh "$t_name" --ex $t_id
+    $MYDIR/play.sh "$t_name" --ex $t_id
 fi

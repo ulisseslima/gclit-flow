@@ -153,14 +153,13 @@ function install() {
         name=$(basename $script)
 
         iname="$INSTALL_PREFIX-${name/.sh/}"
-        iname="${iname/-rr-/-}"
         fname="/usr/local/bin/$iname"
 
         sudo ln -s $script $fname
         info "installed $fname ..."
     done < <(grep -l '@installable' $CLIT/* | grep -v setup)
 
-    debug "installation finished."
+    info "installation finished."
 }
 
 ##
@@ -224,30 +223,33 @@ function check_requirements() {
 ##
 # build initial config.
 function wizard() {
-	debug "checking configuration..."
+	info "checking configuration..."
 
     check_requirements
     install
 
-    prompt USR_EMAIL "runrun email"
-    prompt RR_APP_KEY "runrun API app key"
-	prompt RR_U_TOKEN "runrun API user token"
+    prompt RR_ENABLED "enable RunRun integration? [true|false]"
+    if [[ true == "$RR_ENABLED" ]]; then
+        prompt RR_EMAIL "runrun email"
+        prompt RR_APP_KEY "runrun API app key"
+        prompt RR_U_TOKEN "runrun API user token"
+
+        assert_is_up "$RR_URL"
+        info "$RR_URL is up"
+
+        rr_id=$($MYDIR/runrun.sh GET "users/$(rr_user_id)" | $MYDIR/jprop.sh "['id']")
+        info "runrun id: $rr_id"
+
+        $MYDIR/rr-find-all-projects.sh
+        prompt_project_task
+    fi
     
     prompt GITLAB_TOKEN "gitlab API personal access token"
     prompt GITLAB_API "gitlab API base URL"
 
-    assert_is_up "$RR_URL"
-    debug "$RR_URL is up"
-
-    rr_id=$($MYDIR/runrun.sh GET "users/$(rr_user_id)" | $MYDIR/jprop.sh "['id']")
-    debug "runrun id: $rr_id"
-
-    $MYDIR/rr-find-all-projects.sh
-    prompt_project_task
-
     local_db
 
-	debug "local settings saved to $LOCAL_ENV"
+	info "local settings saved to $LOCAL_ENV"
 }
 
 wizard

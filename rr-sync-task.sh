@@ -9,6 +9,11 @@ source $MYDIR/env
 source $MYDIR/log.sh
 source $MYDIR/db.sh
 
+if [[ "$RR_ENABLED" != true ]]; then
+    debug "run run is not enabled"
+    exit 0
+fi
+
 json=$($MYDIR/runrun.sh GET "tasks?user_id=$(rr_user_id)&is_working_on=true")
 if [[ ! -n "$json" ]]; then
     info "no tasks to sync"

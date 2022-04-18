@@ -12,6 +12,11 @@ source $MYDIR/db.sh
 id="$(db CURR_TASK_ID)"
 name="$(db CURR_TASK_NAME)"
 
+if [[ "$RR_ENABLED" != true ]]; then
+    debug "run run is not enabled"
+    exit 0
+fi
+
 debug "adding comment..."
 
 comment="$1"

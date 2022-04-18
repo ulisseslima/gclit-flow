@@ -33,7 +33,7 @@ GITLAB_ENV=gitlab.env
 LOCAL_DB=$CONFD/db
 LOGF=$CONFD/${REPO_NAME}.log
 
-USR_EMAIL=''
+RR_EMAIL=''
 
 CACHE=/tmp/$REPO_NAME
 mkdir -p $CACHE
@@ -50,6 +50,7 @@ RR_APP_KEY=''
 RR_U_TOKEN=''
 RR_URL='https://runrun.it'
 RR_API='https://runrun.it/api/v1.0'
+RR_ENABLED=''
 
 GITLAB_TOKEN=''
 GITLAB_API=''
@@ -78,9 +79,9 @@ function gitlab_header_token() {
 }
 
 function rr_user_id() {
-    u=$(echo $USR_EMAIL | cut -d'@' -f1 | tr '.' '-')
+    u=$(echo $RR_EMAIL | cut -d'@' -f1 | tr '.' '-')
     if [[ ! -n "$u" ]]; then
-        err "couldn't parse user id from '$USR_EMAIL'"
+        err "couldn't parse user id from '$RR_EMAIL'"
         exit 1
     fi
 

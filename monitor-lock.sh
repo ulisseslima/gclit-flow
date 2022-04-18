@@ -22,10 +22,10 @@ function monitor() {
 
         if echo $X | grep "boolean true" &> /dev/null; then
             debug "screen locked"
-            $MYDIR/rr-pause.sh || $MYDIR/local-play.sh --pause
+            $MYDIR/rr-pause.sh || $MYDIR/play.sh --pause
         elif echo $X | grep "boolean false" &> /dev/null; then
             debug "unlocked screen..."
-            #$MYDIR/rr-play.sh || $MYDIR/local-play.sh || true
+            #$MYDIR/rr-play.sh || $MYDIR/play.sh || true
             $MYDIR/notify.sh "task was automatically paused on screen lock!"
         fi
     done )

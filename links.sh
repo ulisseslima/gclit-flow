@@ -64,14 +64,16 @@ if [[ "$branch" == *fix* ]]; then
 fi
 echo ""
 
-info "task:"
-task=$($MYDIR/rr-find-task.sh "$branch" 2>/dev/null)
-task_id=$(echo "$task" | cut -d'=' -f1)
-if [[ $(nan $task_id) == true ]]; then
-    err "couldn't determine task id from feature: '$branch'. create it with gclit-feature"
-    exit 1
+if [[ "$RR_ENABLED" == true ]]; then
+    info "task:"
+    task=$($MYDIR/rr-find-task.sh "$branch" 2>/dev/null)
+    task_id=$(echo "$task" | cut -d'=' -f1)
+    if [[ $(nan $task_id) == true ]]; then
+        err "couldn't determine task id from feature: '$branch'. create it with gclit-feature"
+        exit 1
+    fi
+    task_info=$(echo "$task" | cut -d'=' -f2)
+    echo "https://runrun.it/en-US/tasks/$task_id"
+    echo "$task_info"
+    echo ""
 fi
-task_info=$(echo "$task" | cut -d'=' -f2)
-echo "https://runrun.it/en-US/tasks/$task_id"
-echo "$task_info"
-echo ""
