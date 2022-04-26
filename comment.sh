@@ -1,4 +1,5 @@
 #!/bin/bash -e
+# @installable
 # inserts a local comment
 MYSELF="$(readlink -f "$0")"
 MYDIR="${MYSELF%/*}"
