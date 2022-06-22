@@ -63,6 +63,7 @@ function check_open_executions() {
         tname=$(echo $open_execution | cut -d'=' -f2)
 
         info "you were previously working on '$tname', ending open executions for task #$tid ..."
+        $MYDIR/spend.sh "$tname"
         comment $tid "started work on task #$chktid"
 
         pause $tid
@@ -219,8 +220,10 @@ do
 done
 
 if [[ -n "$name" ]]; then
+    # switching to a specific task
     debug "will work with task '$name' on project '$project_id' ..."
     task=$(new_task "$name" $project_id)
+
     if [[ -n "$task" ]]; then
         task_id=$(echo "$task" | cut -d'|' -f1)
         debug "created new '$name' task, no previous tasks found"
@@ -234,6 +237,7 @@ if [[ -n "$name" ]]; then
         finish=$(echo $task | cut -d'|' -f2)
     fi
 else
+    # determine current task
     task=$($MYDIR/psql.sh "select t.id,e.finish,t.name from tasks t join executions e on e.task_id=t.id order by e.id desc limit 1")
     task_id=$(echo $task | cut -d'|' -f1)
     finish=$(echo $task | cut -d'|' -f2)
