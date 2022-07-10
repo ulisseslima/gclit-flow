@@ -10,6 +10,7 @@ source $MYDIR/log.sh
 source $MYDIR/db.sh
 
 limit=10
+filter="and e.finish > (now()::date - interval '1 month')"
 
 while test $# -gt 0
 do
@@ -34,10 +35,10 @@ done
 
 info -n "latest executions:"
 $MYDIR/psql.sh "select
-t.name, sum(t.elapsed)
+t.name, t.elapsed
 from executions e
 join tasks t on t.id=e.task_id
-where e.finish > (now()::date - interval '1 month')
+where 1=1
 $filter
 group by t.id
 order by max(e.id) desc
