@@ -6,23 +6,40 @@ ME=$(basename $MYSELF)
 source $MYDIR/env
 [[ -f $LOCAL_ENV ]] && source $LOCAL_ENV 
 source $MYDIR/log.sh
-source $MYDIR/db.sh
 source $MYDIR/require.sh
 
+task_id="$1"
+
 gitlab_prefix=fix
+
+task=$($MYDIR/psql.sh "
+    select row_to_json(tasks) 
+    from tasks where id = '$task_id'
+")
+
+task_repo=$(jprop "$task" repo)
+task_name=$(jprop "$task" name)
+
+if [[ -d "$task_repo" ]]; then
+    is_gitlab=$(grep -c gitlab "$task_repo/.git/config" || true)
+    if [[ $is_gitlab -lt 1 ]]; then
+        # TODO support github
+        debug "not a gitlab repo: $task_repo"
+        exit 0
+    fi
+fi
 
 if [[ -z "$GITLAB_TOKEN" ]]; then
     debug "GITLAB_TOKEN undefined"
     exit 0
 fi
 
-glenv="$(db CURR_FEATURE_DIR)/$GITLAB_ENV"
+glenv="$task_repo/$GITLAB_ENV"
 if [[ ! -f $glenv ]]; then
     err "there must be a file '$glenv' defining gitlab env variables"
 fi
 source $glenv
 
-task_name="$(db CURR_TASK_NAME)"
 if [[ "$task_name" != *$gitlab_prefix* ]]; then
     info "'$task_name': does not contain gitlab_prefix: $gitlab_prefix"
     exit 0

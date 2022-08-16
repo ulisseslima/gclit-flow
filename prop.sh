@@ -1,4 +1,5 @@
 #!/bin/bash
+# gets a value from a key in a properties file
 MYSELF="$(readlink -f "$0")"
 MYDIR="${MYSELF%/*}"
 ME=$(basename $MYSELF)

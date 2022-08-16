@@ -159,8 +159,23 @@ function repo_root() {
     git rev-parse --show-toplevel
 }
 
+function repo_root_quiet() {
+    dir=$(git rev-parse --show-toplevel 2>/dev/null || true)
+    echo $dir
+}
+
 function check_installed() {
 	echo ""
 	echo "checking if $1 is installed..."
 	$@
+}
+
+function jprop() {
+    json="$1"
+    prop="$2"
+
+    value=$(echo "$json" | $MYDIR/jprop.sh "['$prop']")
+    if [[ $value != None ]]; then
+        echo "$value"
+    fi
 }

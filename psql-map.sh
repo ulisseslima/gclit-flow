@@ -1,5 +1,7 @@
 #!/bin/bash -e
 # turns a query into a map. e.g.: ./psql-map.sh tasks "id,name,elapsed" "name='barsd'"
+# 198=barsd 12:29:37.415852
+# the key is the first column, every other column is appended after an equals sign separated by space
 X=$(dirname `readlink -f ${BASH_SOURCE[0]}`)
 source $X/env
 [[ -f $LOCAL_ENV ]] && source $LOCAL_ENV 

@@ -13,7 +13,8 @@ create table tasks (
   closed boolean not null default false, 
   start timestamp not null default now(), 
   finish timestamp, 
-  elapsed interval not null default '0'
+  elapsed interval not null default '0',
+  repo varchar
 );
 
 create table executions (

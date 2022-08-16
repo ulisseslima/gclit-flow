@@ -14,26 +14,52 @@ function new_task() {
     name="$1"
     project_id="$2"
 
-    $MYDIR/psql.sh "WITH existing_task AS (
-     select * from tasks 
-     where name = '$name' and project_id = $project_id
-     ) INSERT INTO tasks
-     (name, project_id, external_id) 
-     SELECT '$name', $project_id, '$external_id'
-     WHERE NOT EXISTS (SELECT * FROM existing_task)
-     RETURNING *
-    ;"
+    old_task=$($MYDIR/psql.sh "
+        select * from tasks 
+        where name = '$name' 
+        and project_id = $project_id
+    ")
+
+    if [[ -z "$old_task" ]]; then
+        repo=$(repo_root_quiet)
+        if [[ -d "$repo" ]]; then
+            info "'$name' task repo defined as $repo (<enter> to confirm):"
+            read confirmation
+        else
+            info "define a repo for '$name' [empty]:"
+            read repo
+            while [[ -n "$repo" && -d "$repo" ]]; do
+                err "not a repo: $repo"
+                read repo
+            done
+        fi
+
+        new_task=$($MYDIR/psql.sh "
+            INSERT INTO tasks
+            (name, project_id, external_id, repo) 
+            SELECT '$name', $project_id, '$external_id', '$repo'
+            RETURNING *
+        ")
+
+        info "new task created"
+        echo "$new_task"
+    else
+        info "using old task"
+        echo "$old_task"
+    fi
 
     if [[ -n "$external_id" ]]; then
         info "updating external id of '$name' to '$external_id'"
-        >&2 $MYDIR/psql.sh "update tasks set external_id = '$external_id' 
+        >&2 $MYDIR/psql.sh "
+            update tasks set external_id = '$external_id' 
             where name = '$name' and project_id = $project_id
         "
     else
         issue_id=$(echo $name | cut -d'-' -f2)
         if [[ $(nan $issue_id) != true ]]; then
             info "updating external id of '$name' to '$issue_id'"
-            >&2 $MYDIR/psql.sh "update tasks set external_id = '$issue_id' 
+            >&2 $MYDIR/psql.sh "
+                update tasks set external_id = '$issue_id' 
                 where name = '$name' and project_id = $project_id
             "
         fi
@@ -47,8 +73,15 @@ function open_tasks() {
 }
 
 function latest_tasks() {
-    $MYDIR/psql.sh "select t.name, t.external_id, t.id, sum(coalesce(e.elapsed, interval '0 minutes'))
-        from tasks t join executions e on e.task_id=t.id group by t.id order by max(e.id) desc limit 5" --full
+    $MYDIR/psql.sh "
+        select t.name, t.external_id, t.id, 
+        sum(coalesce(e.elapsed, interval '0 minutes'))
+        from tasks t 
+        join executions e on e.task_id=t.id 
+        group by t.id 
+        order by max(e.id) desc 
+        limit 5
+    " --full
 }
 
 # finishes unclosed executions
@@ -63,7 +96,7 @@ function check_open_executions() {
         tname=$(echo $open_execution | cut -d'=' -f2)
 
         info "you were previously working on '$tname', ending open executions for task #$tid ..."
-        $MYDIR/spend.sh "$tname"
+        $MYDIR/spend.sh "$tid"
         comment $tid "started work on task #$chktid"
 
         pause $tid
@@ -275,7 +308,7 @@ else
     execution=$(pause $task_id)
     if [[ -n "$execution" ]]; then
         info "paused '$name' locally!"
-        $MYDIR/spend.sh "$name"
+        $MYDIR/spend.sh "$task_id"
     else
         info "couldn't pause '$name' ..."
         
