@@ -30,6 +30,7 @@ if [[ "$1" != '-'* ]]; then
 fi
 
 project_id="$(db CURR_PROJECT_ID)"
+literal_name=false
 
 while test $# -gt 0
 do
@@ -38,11 +39,15 @@ do
         shift
         name="$1"
     ;;
+    --literal)
+        literal_name=true
+    ;;
     --project|-p)
         shift
-        name_or_id="$1"
-
-        project_id=$(prompt_project_id "$name_or_id")
+        
+        # name_or_id="$1"
+        # project_id=$(prompt_project_id "$name_or_id")
+        project_id="$1"
     ;;
     --like)
         shift
@@ -67,13 +72,12 @@ do
     shift
 done
 
-name="$FEATURE_PREFIX/$(safe_name "$name")"
-
 if [[ -z "$project_id" ]]; then
-    info "no project selected. choose one:"
-    read name_or_id
+    project_id=1
+fi
 
-    project_id=$(prompt_project_id "$name_or_id")
+if [[ $literal_name != true ]]; then
+    name="$FEATURE_PREFIX/$(safe_name "$name")"
 fi
 
 if [[ "$RR_ENABLED" == true ]]; then
@@ -82,6 +86,8 @@ if [[ "$RR_ENABLED" == true ]]; then
         err "problem finding project"
         exit 1
     fi
+else
+    project_name=$($MYDIR/psql.sh "select name from projects where id = $project_id")
 fi
 
 # TODO
@@ -131,17 +137,19 @@ fi
 
 project_url="$(project_url)"
 
-description="$project_url/-/tree/$name"
-if [[ "$name" == *fix* ]]; then
-    issue_id=$(echo $name | cut -d'-' -f2)
-    if [[ $(nan $issue_id) == true ]]; then
-        err "couldn't determine issue id from feature name: $name"
+if [[ "$RR_ENABLED" == true ]]; then
+    description="$project_url/-/tree/$name"
+    if [[ "$name" == *fix* ]]; then
+        issue_id=$(echo $name | cut -d'-' -f2)
+        if [[ $(nan $issue_id) == true ]]; then
+            err "couldn't determine issue id from feature name: $name"
+        fi
+
+        description="* $description * $project_url/-/issues/$issue_id"
     fi
 
-    description="* $description * $project_url/-/issues/$issue_id"
+    $MYDIR/rr-new-task.sh "$name" -p $project_id --description "$description"
+
+    info "additional project info on runrun..."
+    $MYDIR/rr-comment.sh "started a new feature on $(project_url)"
 fi
-
-$MYDIR/rr-new-task.sh "$name" -p $project_id --description "$description"
-
-info "additional project info on runrun..."
-$MYDIR/rr-comment.sh "started a new feature on $(project_url)"

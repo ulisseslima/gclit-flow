@@ -109,7 +109,7 @@ function safe_name() {
 }
 
 ##
-# prompts for a project.
+# prompts for an rr project.
 # @param project name or id, case insensitive
 # @return project id
 function prompt_project_id() {
