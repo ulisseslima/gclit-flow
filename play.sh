@@ -259,12 +259,17 @@ if [[ -n "$name" ]]; then
 
     if [[ -n "$task" ]]; then
         task_id=$(echo "$task" | cut -d'|' -f1)
-        debug "created new '$name' task, no previous tasks found"
-        info "task $name created with id $task_id"
+        info "using task #$task_id '$name'"
         new=true
     else
         debug "previously open tasks for '$name' found, looking for latest task execution ..."
-        task=$($MYDIR/psql.sh "select t.id,e.finish from tasks t join executions e on e.task_id=t.id where t.name = '$name' order by e.id desc limit 1")
+        task=$($MYDIR/psql.sh "select 
+            t.id,e.finish 
+            from tasks t join executions e on e.task_id=t.id 
+            where t.name = '$name' 
+            order by e.id desc 
+            limit 1
+        ")
         
         task_id=$(echo $task | cut -d'|' -f1)
         finish=$(echo $task | cut -d'|' -f2)
