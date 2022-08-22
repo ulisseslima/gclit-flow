@@ -28,8 +28,8 @@ function new_task() {
         else
             info "define a repo for '$name' [empty]:"
             read repo
-            while [[ -n "$repo" && -d "$repo" ]]; do
-                err "not a repo: $repo"
+            while [[ -n "$repo" && ! -d "$repo" ]]; do
+                err "not a repo: $repo - try again:"
                 read repo
             done
         fi
@@ -112,16 +112,17 @@ function check_open_executions() {
     fi
 }
 
+# FIXME not pausing when open execution exists
 # @return execution if created
 function play() {
     pltask_id="$1"
 
-    if [[ ! -n "$pltask_id" ]]; then
+    if [[ -z "$pltask_id" ]]; then
         err "task id cannot be null"
         exit 1
     fi
 
-    debug "playing #$pltask_id ..."
+    info "playing #$pltask_id ..."
 
     check_open_executions $pltask_id
 
@@ -295,7 +296,8 @@ if [[ -n "$finish" || $new == true ]]; then
             db CURR_TASK_ID "${task_id}"
             db CURR_TASK_NAME "${name}"
         else
-            err "couldn't play '$name' ..."
+            err "2 - couldn't play '$name' ... execution:"
+            info "$execution"
         fi
     else
         info "already paused locally"
@@ -326,7 +328,7 @@ else
             db CURR_TASK_ID "${task_id}"
             db CURR_TASK_NAME "${name}"
         else
-            err "couldn't play '$name' ..."
+            err "1 - couldn't play '$name' ..."
         fi
     fi
 fi
