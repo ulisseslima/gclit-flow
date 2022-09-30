@@ -25,9 +25,11 @@ do
     shift
 done
 
+# TODO fix: get from task?
 [[ -z "$target" ]] && target=$(db CURR_FEATURE_TARGET_BRANCH)
 require target
-info "syncing with $target .."
+info "sync with '$target'?"
+read confirm
 
 if [[ ! -n "$(curr_branch)" ]]; then
     err "you have to be inside the repository directory"
