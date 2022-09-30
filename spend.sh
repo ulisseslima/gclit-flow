@@ -20,6 +20,11 @@ task=$($MYDIR/psql.sh "
 task_repo=$(jprop "$task" repo)
 task_name=$(jprop "$task" name)
 
+if [[ -z "$task_repo" ]]; then
+    debug "no repo defined"
+    exit 0
+fi
+
 if [[ -d "$task_repo" ]]; then
     is_gitlab=$(grep -c gitlab "$task_repo/.git/config" || true)
     if [[ $is_gitlab -lt 1 ]]; then
