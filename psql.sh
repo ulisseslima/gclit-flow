@@ -1,4 +1,5 @@
 #!/bin/bash -e
+# @installable
 # queries the local database
 X=$(dirname `readlink -f ${BASH_SOURCE[0]}`)
 source $X/env
