@@ -35,7 +35,7 @@ done
 
 info -n "latest executions:"
 $MYDIR/psql.sh "select
-t.name, t.elapsed
+t.id, t.external_id ext, t.name, t.elapsed
 from executions e
 join tasks t on t.id=e.task_id
 where 1=1
