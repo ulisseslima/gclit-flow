@@ -152,4 +152,6 @@ if [[ "$RR_ENABLED" == true ]]; then
 
     info "additional project info on runrun..."
     $MYDIR/rr-comment.sh "started a new feature on $(project_url)"
+else
+    $MYDIR/play.sh "$name"
 fi
