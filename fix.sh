@@ -15,4 +15,5 @@ if [[ $(nan "$issue_id") == true ]]; then
     exit 1
 fi
 
-$MYDIR/feature.sh --name "fix #${issue_id}"
+issue_tag="$2"
+$MYDIR/feature.sh --name "fix #${issue_id} $issue_tag"
