@@ -31,6 +31,8 @@ fi
 
 project_id="$(db CURR_PROJECT_ID)"
 literal_name=false
+# sync with target branch before creating the new one
+sync=true
 
 while test $# -gt 0
 do
@@ -41,6 +43,9 @@ do
     ;;
     --literal)
         literal_name=true
+    ;;
+    --sync-later|--no-sync)
+        sync=false
     ;;
     --project|-p)
         shift
@@ -97,9 +102,11 @@ fi
 #fi
 
 TARGET_BRANCH=$(curr_branch)
-info "switching to $TARGET_BRANCH and syncing..."
-git checkout $TARGET_BRANCH
-git pull
+if [[ "$sync" == true ]]; then
+	info "switching to $TARGET_BRANCH and syncing..."
+	git checkout $TARGET_BRANCH
+	git pull
+fi
 
 if [[ $(git branch | grep -c $name) -eq 1 ]]; then
     info "feature already exists. switching to it..."
