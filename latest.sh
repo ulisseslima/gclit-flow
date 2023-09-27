@@ -11,23 +11,27 @@ source $MYDIR/db.sh
 
 limit=10
 filter="and e.finish > (now()::date - interval '1 month')"
+full=full
 
 while test $# -gt 0
 do
     case "$1" in
     --limit|-l)
-	shift
+	    shift
       	limit=$1
     ;;
     --all|-a)
       	limit=10000
     ;;
     --filter|-f)
-	shift
-	filter="and t.name ilike '%$1%'"
+	    shift
+	    filter="and t.name ilike '%$1%'"
+    ;;
+    --raw)
+	    full=raw
     ;;
     -*)
-      echo "bad option '$1'"
+        echo "bad option '$1'"
     ;;
     esac
     shift
@@ -42,4 +46,4 @@ where 1=1
 $filter
 group by t.id
 order by max(e.id) desc
-limit $limit" --full
+limit $limit" --$full
