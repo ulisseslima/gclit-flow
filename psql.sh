@@ -53,6 +53,9 @@ do
     --full)
         ops="c"
     ;;
+    --raw)
+        noop=noop
+    ;;
     -*)
         echo "bad option '$1'"
         exit 1
