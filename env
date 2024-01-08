@@ -53,7 +53,7 @@ RR_API='https://runrun.it/api/v1.0'
 RR_ENABLED=''
 
 GITLAB_TOKEN=''
-GITLAB_API=''
+GITLAB_API='https://gitlab.com/api/v4'
 
 DB_NAME=timesheet
 DB_USER=postgres
