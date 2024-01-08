@@ -40,19 +40,32 @@ function gitlab() {
 		curl $curl_opts -X $method "$GITLAB_API/$endpoint"\
 			-H "$(gitlab_header_token)"
 	fi
+
+	# TODO incluir content type
+	request_debug="curl $curl_opts -X $method '$GITLAB_API/$endpoint' -H '$(gitlab_header_token)'"
+	debug "request: $request_debug"
 }
 
 # cache responses
 response=$(gitlab "$@")
-
-out="$CACHE/$1-$2.response.json"
-mkdir -p $(dirname "$out")
-
-echo "$response" > "$out"
-debug "response cached to $out"
-
-if [[ "$response" == *html* ]]; then
+error=true
+if [[ -z "${response}" ]]; then
+	err "no response from gitlab for request: $request_debug"
+elif [[ "${response,,}" == *'401 unauthorized'* ]]; then
 	err "$response"
+	err "request: $request_debug"
+elif [[ "$response" == *html* ]]; then
+	err "$response"
+else
+	error=false
+fi
+
+if [[ $error != true ]]; then
+	out="$CACHE/$1-$2.response.json"
+	mkdir -p $(dirname "$out")
+
+	echo "$response" > "$out"
+	debug "response cached to $out"
 fi
 
 echo "$response"
