@@ -59,7 +59,7 @@ fi
 duration=$($MYDIR/spent.sh $issue_id)
 if [[ -z "$duration" ]]; then
     err "couldn't determine time spent on task id '$issue_id' since last execution"
-else
+elif [[ "$duration" != '0m' ]]; then
     info "marking '$duration' as spent on '$issue_id' ..."
     $MYDIR/gitlab-api.sh POST "projects/$GITLAB_PID/issues/$issue_id/add_spent_time?duration=$duration"
 fi
