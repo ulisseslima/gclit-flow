@@ -3,7 +3,7 @@
 -- create database timesheet;
 
 create table projects (id serial PRIMARY KEY, external_id text, name text unique not null);
--- insert into projects (name) select 'default';
+insert into projects (name) select 'default';
 
 create table tasks (
   id serial PRIMARY KEY, 
