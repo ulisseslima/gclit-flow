@@ -31,3 +31,28 @@ create table comments (
   stamp timestamp not null default now(), 
   content text
 );
+
+-- to activate debug: set client_min_messages to 'debug';
+CREATE OR REPLACE FUNCTION similar_task(task_ varchar)
+RETURNS TEXT AS $f$
+DECLARE
+  _result record;
+BEGIN
+  select 
+    task.id,
+    task.name,
+    similarity(name, task_) similarity
+  from tasks task 
+  join executions e on e.task_id=task.id 
+  where similarity(name, task_) > 0
+  group by task.id 
+  order by
+    similarity desc,
+    max(e.id) desc
+  limit 1
+  into _result;
+
+  raise debug 'last: %', _result;
+  RETURN _result.id||'|'||_result.name||'|'||_result.similarity;
+END;
+$f$ LANGUAGE plpgsql;

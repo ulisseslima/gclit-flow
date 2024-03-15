@@ -66,24 +66,6 @@ function new_task() {
     fi
 }
 
-function open_tasks() {
-    $MYDIR/psql-map.sh tasks \
-        "id,name,elapsed" \
-        "closed is false order by start"
-}
-
-function latest_tasks() {
-    $MYDIR/psql.sh "
-        select t.name, t.external_id, t.id, 
-        sum(coalesce(e.elapsed, interval '0 minutes'))
-        from tasks t 
-        join executions e on e.task_id=t.id 
-        group by t.id 
-        order by max(e.id) desc 
-        limit 5
-    " --full
-}
-
 # finishes unclosed executions
 function check_open_executions() {
     chktid=$1
