@@ -38,7 +38,8 @@ do
 done
 
 info -n "latest executions:"
-$MYDIR/psql.sh "select
+
+query="select
 t.id, t.external_id ext, t.name, t.elapsed
 from executions e
 join tasks t on t.id=e.task_id
@@ -46,4 +47,7 @@ where 1=1
 $filter
 group by t.id
 order by max(e.id) desc
-limit $limit" --$full
+limit $limit"
+
+debug "$query"
+$MYDIR/psql.sh "$query" --$full

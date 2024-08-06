@@ -24,7 +24,10 @@ do
         shift
         limit=$1
     ;;
-    -*) 
+    --all|-a)
+        limit=100000
+    ;;
+    -*)
       echo "bad option '$1'"
       exit 1
     ;;
@@ -33,13 +36,15 @@ do
 done
 
 info -n "latest executions from '$task':"
-$MYDIR/psql.sh "select 
+query="select 
 x.* 
 from executions x 
 join tasks task on task.id=x.task_id 
 where task.name ilike '%$task%' 
 order by id desc 
 limit $limit
-" --full
+"
 
-#$MYDIR/elapsed.sh "$task_id"
+$MYDIR/psql.sh "$query" --full
+
+$MYDIR/elapsed.sh "$task" --exclude-overall
