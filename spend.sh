@@ -1,4 +1,7 @@
 #!/bin/bash -e
+# marks time spent for issues in the format fix-123-whatever-else
+# task dir must be a gitlab repo
+# receives task id from db, not gitlab
 MYSELF="$(readlink -f "$0")"
 MYDIR="${MYSELF%/*}"
 ME=$(basename $MYSELF)
@@ -35,7 +38,7 @@ if [[ -d "$task_repo" ]]; then
 fi
 
 if [[ -z "$GITLAB_TOKEN" ]]; then
-    debug "GITLAB_TOKEN undefined"
+    err "GITLAB_TOKEN undefined"
     exit 0
 fi
 
@@ -62,4 +65,6 @@ if [[ -z "$duration" ]]; then
 elif [[ "$duration" != '0m' ]]; then
     info "marking '$duration' as spent on '$issue_id' ..."
     $MYDIR/gitlab-api.sh POST "projects/$GITLAB_PID/issues/$issue_id/add_spent_time?duration=$duration"
+else
+    info "no time spent"
 fi

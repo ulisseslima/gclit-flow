@@ -9,4 +9,4 @@ source $MYDIR/env
 source $MYDIR/log.sh
 source $MYDIR/db.sh
 
-google-chrome 'https://github.com/ulisseslima/gclit-flow'
+$MYDIR/psql.sh "select t.repo from tasks t join executions e on e.task_id=t.id order by e.id desc limit 1"
